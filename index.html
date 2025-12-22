@@ -28,6 +28,99 @@
             padding: 30px;
             max-width: 500px;
             width: 100%;
+            position: relative;
+        }
+
+        .info-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .info-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .help-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .help-overlay.active {
+            display: flex;
+        }
+
+        .help-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .help-box h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .help-box p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .help-box .close-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
@@ -186,6 +279,17 @@
             font-size: 16px;
         }
 
+        .message-text {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
         .error {
             margin-top: 20px;
             padding: 15px;
@@ -242,9 +346,25 @@
     </style>
 </head>
 <body>
+    <div class="help-overlay" id="helpOverlay" onclick="closeHelp()">
+        <div class="help-box" onclick="event.stopPropagation()">
+            <h2>📖 Anleitung</h2>
+            <p><strong>So funktioniert's:</strong></p>
+            <p>1️⃣ Gib die Nummer des Punktes ein, den du finden möchtest.</p>
+            <p>2️⃣ Drücke auf "Standort prüfen" - dein GPS wird aktiviert.</p>
+            <p>3️⃣ Wenn du näher als 20 Meter am Punkt bist, siehst du das Bild und erhältst die geheimen Zellen!</p>
+            <p>4️⃣ Bist du zu weit weg, kannst du dir optional die Entfernung anzeigen lassen.</p>
+            <p><strong>Tipp:</strong> Aktiviere GPS auf deinem Handy für die beste Genauigkeit!</p>
+            <button class="close-btn" onclick="closeHelp()">Verstanden</button>
+        </div>
+    </div>
+
     <div class="container">
+        <div class="info-icon" onclick="showHelp()" title="Hilfe">i</div>
+        
         <div class="icon">🗺️</div>
-        <h1>GPS Schnitzeljagd</h1>
+        <h1>Wie gut kennst du Leonberg?</h1>
+        <h3>Das Such- und Findespiel in der Umgebung für Juli</h3>
         <p class="subtitle">Gib die Punktnummer ein und prüfe deine Position</p>
         
         <div class="input-group">
@@ -266,32 +386,34 @@
     </div>
 
     <script>
-        // Definierte Zielorte mit Nummern, Koordinaten, Bildern und Zellen
+        // Definierte Zielorte mit Nummern, Koordinaten, Bildern, Zellen und Nachrichten
         const targets = [
             {
                 number: 1,
-                lat: 48.78955551200393, 
-                lon:  9.009091941919182,
-                image: 'https://i.etsystatic.com/38762908/r/il/cad0e2/4346703256/il_794xN.4346703256_7lqd.jpg',
+                lat: 48.78955683734332, 
+                lon: 9.009094624129403,
+                image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
+                successMessage: '🎉 Perfekt! Du hast Punkt 1 gefunden!',
+                failMessage: '❌ Noch nicht ganz da. Suche weiter!',
                 cells: [
-                      {'text': 'K15', 'color': 'yellow'},
-                      {'text': 'T20', 'color': 'yellow'},
-                      {'text': 'V8', 'color': 'yellow'},
-                      {'text': 'J26', 'color': 'yellow'},
-                      {'text': 'T1', 'color': 'yellow'},
-                      {'text': 'Q24', 'color': 'yellow'},
-                      {'text': 'P17', 'color': 'yellow'},
-                      {'text': 'T29', 'color': 'yellow'},
-                      {'text': 'K11', 'color': 'yellow'},
-                      {'text': 'M8', 'color': 'yellow'},
-                      {'text': 'F7', 'color': 'yellow'},
-                      {'text': 'K16', 'color': 'yellow'},
-                      {'text': 'F26', 'color': 'yellow'},
-                      {'text': 'Z14', 'color': 'brown'},
-                      {'text': 'L19', 'color': 'brown'},
-                      {'text': 'Z9', 'color': 'brown'},
-                      {'text': 'Z13', 'color': 'brown'},
-                      {'text': 'O13', 'color': 'black'}
+                  {'text': 'K15', 'color': 'yellow'},
+                  {'text': 'T20', 'color': 'yellow'},
+                  {'text': 'V8', 'color': 'yellow'},
+                  {'text': 'J26', 'color': 'yellow'},
+                  {'text': 'T1', 'color': 'yellow'},
+                  {'text': 'Q24', 'color': 'yellow'},
+                  {'text': 'P17', 'color': 'yellow'},
+                  {'text': 'T29', 'color': 'yellow'},
+                  {'text': 'K11', 'color': 'yellow'},
+                  {'text': 'M8', 'color': 'yellow'},
+                  {'text': 'F7', 'color': 'yellow'},
+                  {'text': 'K16', 'color': 'yellow'},
+                  {'text': 'F26', 'color': 'yellow'},
+                  {'text': 'Z14', 'color': 'brown'},
+                  {'text': 'L19', 'color': 'brown'},
+                  {'text': 'Z9', 'color': 'brown'},
+                  {'text': 'Z13', 'color': 'brown'},
+                  {'text': 'O13', 'color': 'black'}
                 ]
             },
             {
@@ -299,6 +421,8 @@
                 lat: 48.7100,
                 lon: 9.0100,
                 image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80',
+                successMessage: '✨ Hervorragend! Du bist am richtigen Ort!',
+                failMessage: '🔍 Du bist auf dem richtigen Weg, aber noch nicht da.',
                 cells: [
                     { text: 'AD30', color: 'yellow' },
                     { text: 'F12', color: 'brown' },
@@ -312,6 +436,8 @@
                 lat: 48.6950,
                 lon: 9.0000,
                 image: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=800&q=80',
+                successMessage: '🏆 Fantastisch! Das letzte Ziel ist erreicht!',
+                failMessage: '🧭 Fast geschafft! Komm noch ein Stück näher.',
                 cells: [
                     { text: 'X1', color: 'black' },
                     { text: 'Y5', color: 'yellow' }
@@ -333,6 +459,14 @@
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
             return R * c; // Entfernung in Metern
+        }
+
+        function showHelp() {
+            document.getElementById('helpOverlay').classList.add('active');
+        }
+
+        function closeHelp() {
+            document.getElementById('helpOverlay').classList.remove('active');
         }
 
         function showDistance(dist, pointNumber) {
@@ -388,14 +522,16 @@
                     `;
                     
                     if (dist < 20) {
-                        // Erfolg: Zeige Zellen
+                        // Erfolg: Zeige Zellen und Erfolgsnachricht
+                        resultHtml += `<div class="message-text">${target.successMessage}</div>`;
                         resultHtml += '<div class="cell-grid">';
                         for (const cell of target.cells) {
                             resultHtml += `<div class="cell cell-${cell.color}">${cell.text}</div>`;
                         }
                         resultHtml += '</div>';
                     } else {
-                        // Misserfolg: Button zum Anzeigen der Entfernung
+                        // Misserfolg: Zeige Fehlermeldung und Button zum Anzeigen der Entfernung
+                        resultHtml += `<div class="message-text">${target.failMessage}</div>`;
                         resultHtml += `
                             <button class="distance-btn" id="distanceBtn" onclick="showDistance(${dist}, ${pointNumber})">
                                 Entfernung anzeigen
