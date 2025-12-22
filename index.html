@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Näherungsdetektor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-radius: 12px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fee;
+            border: 2px solid #fcc;
+            border-radius: 12px;
+            color: #c33;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 12px;
+            color: #1565c0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📍</div>
+        <h1>GPS Näherungsdetektor</h1>
+        <p class="subtitle">Prüfe deinen aktuellen Standort</p>
+        
+        <button id="checkBtn" onclick="checkLocation()">
+            Standort prüfen
+        </button>
+
+        <div id="messageBox"></div>
+        <div id="errorBox"></div>
+
+        <div class="info">
+            💡 <strong>Hinweis:</strong> Drücke den Button, um deine Position zu prüfen. 
+            Wenn du dich in der Nähe eines besonderen Ortes befindest, erscheint eine Nachricht.
+        </div>
+    </div>
+
+    <script>
+        // Definierte Zielorte mit Koordinaten und Nachrichten
+        const targets = [
+            {
+                name: 'Stadtzentrum',
+                lat: 48.7896428043317,
+                lon:  9.0090940470187,
+                message: '🎯 Du bist am Stadtzentrum angekommen!'
+            },
+            {
+                name: 'Park',
+                lat: 48.7100,
+                lon: 9.0100,
+                message: '🌳 Willkommen im Park!'
+            },
+            {
+                name: 'Bahnhof',
+                lat: 48.6950,
+                lon: 9.0000,
+                message: '🚉 Du bist am Bahnhof!'
+            }
+        ];
+
+        // Berechnet die Entfernung zwischen zwei GPS-Koordinaten in Metern (Haversine-Formel)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Erdradius in Metern
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c; // Entfernung in Metern
+        }
+
+        function checkLocation() {
+            const btn = document.getElementById('checkBtn');
+            const messageBox = document.getElementById('messageBox');
+            const errorBox = document.getElementById('errorBox');
+
+            // Reset
+            messageBox.innerHTML = '';
+            errorBox.innerHTML = '';
+
+            if (!navigator.geolocation) {
+                errorBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstützt</div>';
+                return;
+            }
+
+            // Button deaktivieren und Ladeanimation zeigen
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Prüfe Position...';
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // Prüfe alle Zielorte
+                    let found = false;
+                    for (const target of targets) {
+                        const dist = calculateDistance(lat, lon, target.lat, target.lon);
+                        
+                        if (dist < 20) {
+                            messageBox.innerHTML = `<div class="message">${target.message}</div>`;
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        messageBox.innerHTML = '<div class="info">📍 Kein besonderer Ort in der Nähe gefunden.</div>';
+                    }
+
+                    // Button wieder aktivieren
+                    btn.disabled = false;
+                    btn.innerHTML = 'Standort prüfen';
+                },
+                function(error) {
+                    errorBox.innerHTML = `<div class="error">GPS-Fehler: ${error.message}<br><br>Bitte stelle sicher, dass du die Standortberechtigung erteilt hast.</div>`;
+                    
+                    // Button wieder aktivieren
+                    btn.disabled = false;
+                    btn.innerHTML = 'Standort prüfen';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+    </script>
+</body>
+</html>
