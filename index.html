@@ -220,8 +220,8 @@
         const targets = [
             {
                 number: 1,
-                lat: 48.7019,
-                lon: 9.0050,
+                lat: 48.789549327493255, 
+                lon:  9.009126302287898,
                 image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
                 details: {
                     'Ort': 'Stadtzentrum',
@@ -326,7 +326,7 @@
                             </div>
                         `;
                     } else {
-                        errorBox.innerHTML = `<div class="error">Du bist noch ${Math.round(dist)} Meter von Punkt ${pointNumber} entfernt. Komm näher!</div>`;
+                        errorBox.innerHTML = `<div class="error">Du bist nicht in der Nähe des gesuchten Ortes. Such weiter!</div>`;
                     }
 
                     // Button wieder aktivieren
