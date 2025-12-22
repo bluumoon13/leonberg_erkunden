@@ -136,6 +136,56 @@
             width: 120px;
         }
 
+        .cell-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .cell {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .cell-yellow {
+            background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
+        }
+
+        .cell-brown {
+            background: linear-gradient(135deg, #8b4513 0%, #5c3317 100%);
+        }
+
+        .cell-black {
+            background: linear-gradient(135deg, #434343 0%, #000000 100%);
+        }
+
+        .distance-btn {
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid white;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .distance-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
         .error {
             margin-top: 20px;
             padding: 15px;
@@ -216,40 +266,41 @@
     </div>
 
     <script>
-        // Definierte Zielorte mit Nummern, Koordinaten, Bildern und Details
+        // Definierte Zielorte mit Nummern, Koordinaten, Bildern und Zellen
         const targets = [
             {
                 number: 1,
-                lat: 48.789549327493255, 
-                lon:  9.009126302287898,
-                image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
-                details: {
-                    'Ort': 'Stadtzentrum',
-                    'Besonderheit': 'Historischer Marktplatz',
-                    'Gefunden': 'Punkt 1 abgeschlossen! ✓'
-                }
+                lat: 48.78955551200393, 
+                lon:  9.009091941919182,
+                image: 'https://i.etsystatic.com/38762908/r/il/cad0e2/4346703256/il_794xN.4346703256_7lqd.jpg',
+                cells: [
+                    { text: 'A1', color: 'yellow' },
+                    { text: 'B5', color: 'brown' },
+                    { text: 'C3', color: 'black' }
+                ]
             },
             {
                 number: 2,
                 lat: 48.7100,
                 lon: 9.0100,
                 image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80',
-                details: {
-                    'Ort': 'Stadtpark',
-                    'Besonderheit': 'Großer alter Baum',
-                    'Gefunden': 'Punkt 2 abgeschlossen! ✓'
-                }
+                cells: [
+                    { text: 'AD30', color: 'yellow' },
+                    { text: 'F12', color: 'brown' },
+                    { text: 'Z99', color: 'black' },
+                    { text: 'K7', color: 'yellow' },
+                    { text: 'M2', color: 'brown' }
+                ]
             },
             {
                 number: 3,
                 lat: 48.6950,
                 lon: 9.0000,
                 image: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=800&q=80',
-                details: {
-                    'Ort': 'Hauptbahnhof',
-                    'Besonderheit': 'Historisches Bahnhofsgebäude',
-                    'Gefunden': 'Punkt 3 abgeschlossen! ✓'
-                }
+                cells: [
+                    { text: 'X1', color: 'black' },
+                    { text: 'Y5', color: 'yellow' }
+                ]
             }
         ];
 
@@ -267,6 +318,12 @@
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
             return R * c; // Entfernung in Metern
+        }
+
+        function showDistance(dist, pointNumber) {
+            const distInfo = document.getElementById('distanceInfo');
+            distInfo.innerHTML = `<div class="distance-info">📍 Entfernung: ${Math.round(dist)} Meter von Punkt ${pointNumber}</div>`;
+            document.getElementById('distanceBtn').style.display = 'none';
         }
 
         function checkLocation() {
@@ -309,25 +366,31 @@
 
                     const dist = calculateDistance(lat, lon, target.lat, target.lon);
                     
+                    // Bild wird immer angezeigt
+                    let resultHtml = `
+                        <div class="result-box">
+                            <img src="${target.image}" alt="Punkt ${target.number}" class="result-image">
+                    `;
+                    
                     if (dist < 20) {
-                        // Erfolg: Zeige Bild und Details
-                        let detailsHtml = '<ul>';
-                        for (const [key, value] of Object.entries(target.details)) {
-                            detailsHtml += `<li><strong>${key}:</strong> ${value}</li>`;
+                        // Erfolg: Zeige Zellen
+                        resultHtml += '<div class="cell-grid">';
+                        for (const cell of target.cells) {
+                            resultHtml += `<div class="cell cell-${cell.color}">${cell.text}</div>`;
                         }
-                        detailsHtml += '</ul>';
-
-                        resultBox.innerHTML = `
-                            <div class="result-box">
-                                <img src="${target.image}" alt="Punkt ${target.number}" class="result-image">
-                                <div class="result-list">
-                                    ${detailsHtml}
-                                </div>
-                            </div>
-                        `;
+                        resultHtml += '</div>';
                     } else {
-                        errorBox.innerHTML = `<div class="error">Du bist nicht in der Nähe des gesuchten Ortes. Such weiter!</div>`;
+                        // Misserfolg: Button zum Anzeigen der Entfernung
+                        resultHtml += `
+                            <button class="distance-btn" id="distanceBtn" onclick="showDistance(${dist}, ${pointNumber})">
+                                Entfernung anzeigen
+                            </button>
+                            <div id="distanceInfo"></div>
+                        `;
                     }
+                    
+                    resultHtml += '</div>';
+                    resultBox.innerHTML = resultHtml;
 
                     // Button wieder aktivieren
                     btn.disabled = false;
