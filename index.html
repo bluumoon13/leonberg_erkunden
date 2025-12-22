@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Näherungsdetektor</title>
+    <title>GPS Schnitzeljagd</title>
     <style>
         * {
             margin: 0;
@@ -44,6 +44,32 @@
             margin-bottom: 30px;
         }
 
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
         button {
             width: 100%;
             padding: 18px;
@@ -68,17 +94,46 @@
             box-shadow: none;
         }
 
-        .message {
+        .result-box {
             margin-top: 20px;
             padding: 20px;
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             border-radius: 12px;
             color: white;
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
             animation: slideIn 0.5s ease-out;
             box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        }
+
+        .result-image {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .result-list {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .result-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .result-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 16px;
+        }
+
+        .result-list li:last-child {
+            border-bottom: none;
+        }
+
+        .result-list li strong {
+            display: inline-block;
+            width: 120px;
         }
 
         .error {
@@ -138,43 +193,63 @@
 </head>
 <body>
     <div class="container">
-        <div class="icon">📍</div>
-        <h1>GPS Näherungsdetektor</h1>
-        <p class="subtitle">Prüfe deinen aktuellen Standort</p>
+        <div class="icon">🗺️</div>
+        <h1>GPS Schnitzeljagd</h1>
+        <p class="subtitle">Gib die Punktnummer ein und prüfe deine Position</p>
         
+        <div class="input-group">
+            <label for="pointNumber">Punktnummer:</label>
+            <input type="number" id="pointNumber" min="1" placeholder="z.B. 1, 2, 3..." />
+        </div>
+
         <button id="checkBtn" onclick="checkLocation()">
             Standort prüfen
         </button>
 
-        <div id="messageBox"></div>
+        <div id="resultBox"></div>
         <div id="errorBox"></div>
 
         <div class="info">
-            💡 <strong>Hinweis:</strong> Drücke den Button, um deine Position zu prüfen. 
-            Wenn du dich in der Nähe eines besonderen Ortes befindest, erscheint eine Nachricht.
+            💡 <strong>Hinweis:</strong> Gib die Nummer des Punktes ein und drücke den Button. 
+            Wenn du dich in der Nähe befindest (unter 20 Meter), siehst du das zugehörige Bild und die Details.
         </div>
     </div>
 
     <script>
-        // Definierte Zielorte mit Koordinaten und Nachrichten
+        // Definierte Zielorte mit Nummern, Koordinaten, Bildern und Details
         const targets = [
             {
-                name: 'Stadtzentrum',
-                lat: 48.7896428043317,
-                lon:  9.0090940470187,
-                message: '🎯 Du bist am Stadtzentrum angekommen!'
+                number: 1,
+                lat: 48.7019,
+                lon: 9.0050,
+                image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
+                details: {
+                    'Ort': 'Stadtzentrum',
+                    'Besonderheit': 'Historischer Marktplatz',
+                    'Gefunden': 'Punkt 1 abgeschlossen! ✓'
+                }
             },
             {
-                name: 'Park',
+                number: 2,
                 lat: 48.7100,
                 lon: 9.0100,
-                message: '🌳 Willkommen im Park!'
+                image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80',
+                details: {
+                    'Ort': 'Stadtpark',
+                    'Besonderheit': 'Großer alter Baum',
+                    'Gefunden': 'Punkt 2 abgeschlossen! ✓'
+                }
             },
             {
-                name: 'Bahnhof',
+                number: 3,
                 lat: 48.6950,
                 lon: 9.0000,
-                message: '🚉 Du bist am Bahnhof!'
+                image: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=800&q=80',
+                details: {
+                    'Ort': 'Hauptbahnhof',
+                    'Besonderheit': 'Historisches Bahnhofsgebäude',
+                    'Gefunden': 'Punkt 3 abgeschlossen! ✓'
+                }
             }
         ];
 
@@ -196,12 +271,27 @@
 
         function checkLocation() {
             const btn = document.getElementById('checkBtn');
-            const messageBox = document.getElementById('messageBox');
+            const resultBox = document.getElementById('resultBox');
             const errorBox = document.getElementById('errorBox');
+            const pointNumber = parseInt(document.getElementById('pointNumber').value);
 
             // Reset
-            messageBox.innerHTML = '';
+            resultBox.innerHTML = '';
             errorBox.innerHTML = '';
+
+            // Validierung der Punktnummer
+            if (!pointNumber || pointNumber < 1) {
+                errorBox.innerHTML = '<div class="error">Bitte gib eine gültige Punktnummer ein!</div>';
+                return;
+            }
+
+            // Finde den Punkt mit der eingegebenen Nummer
+            const target = targets.find(t => t.number === pointNumber);
+            
+            if (!target) {
+                errorBox.innerHTML = '<div class="error">Punkt mit dieser Nummer existiert nicht!</div>';
+                return;
+            }
 
             if (!navigator.geolocation) {
                 errorBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstützt</div>';
@@ -217,20 +307,26 @@
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
 
-                    // Prüfe alle Zielorte
-                    let found = false;
-                    for (const target of targets) {
-                        const dist = calculateDistance(lat, lon, target.lat, target.lon);
-                        
-                        if (dist < 20) {
-                            messageBox.innerHTML = `<div class="message">${target.message}</div>`;
-                            found = true;
-                            break;
+                    const dist = calculateDistance(lat, lon, target.lat, target.lon);
+                    
+                    if (dist < 20) {
+                        // Erfolg: Zeige Bild und Details
+                        let detailsHtml = '<ul>';
+                        for (const [key, value] of Object.entries(target.details)) {
+                            detailsHtml += `<li><strong>${key}:</strong> ${value}</li>`;
                         }
-                    }
+                        detailsHtml += '</ul>';
 
-                    if (!found) {
-                        messageBox.innerHTML = '<div class="info">📍 Kein besonderer Ort in der Nähe gefunden.</div>';
+                        resultBox.innerHTML = `
+                            <div class="result-box">
+                                <img src="${target.image}" alt="Punkt ${target.number}" class="result-image">
+                                <div class="result-list">
+                                    ${detailsHtml}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        errorBox.innerHTML = `<div class="error">Du bist noch ${Math.round(dist)} Meter von Punkt ${pointNumber} entfernt. Komm näher!</div>`;
                     }
 
                     // Button wieder aktivieren
@@ -251,6 +347,13 @@
                 }
             );
         }
+
+        // Enter-Taste im Input-Feld
+        document.getElementById('pointNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkLocation();
+            }
+        });
     </script>
 </body>
 </html>
