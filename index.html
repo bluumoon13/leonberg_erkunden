@@ -121,69 +121,6 @@
             object-fit: cover;
         }
 
-        .image-popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .image-popup.active {
-            display: flex;
-        }
-
-        .image-popup-content {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            max-width: 600px;
-            width: 100%;
-            margin-top: 20px;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        .image-popup-content img {
-            width: 100%;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .image-popup-content button {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .close-popup-btn {
-            background: #dc3545;
-            margin-top: 10px;
-        }
-
-        .congrats-message {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        .congrats-message p {
-            margin: 10px 0;
-            color: white;
-        }
-
         .controls {
             background: white;
             border-radius: 15px;
@@ -385,16 +322,67 @@
             object-fit: cover;
         }
 
-        .gallery-item .number-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0, 0, 0, 0.7);
+        .image-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .image-popup.active {
+            display: flex;
+        }
+
+        .image-popup-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 600px;
+            width: 100%;
+            margin-top: 20px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .image-popup-content img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .image-popup-content button {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .close-popup-btn {
+            background: #dc3545;
+            margin-top: 10px;
+        }
+
+        .congrats-message {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 12px;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
             font-weight: bold;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .congrats-message p {
+            margin: 10px 0;
+            color: white;
         }
 
         .spinner {
@@ -471,12 +459,20 @@
     <div class="overlay" id="galleryOverlay" onclick="closeGallery()">
         <div class="overlay-content" onclick="event.stopPropagation()">
             <h2>Gefundene Orte</h2>
+            <div id="congratsBox"></div>
             <div class="gallery-grid" id="galleryGrid"></div>
             <button class="close-btn" onclick="closeGallery()">Schliessen</button>
         </div>
     </div>
 
-    <!-- Bild Popup -->
+    <div class="image-popup" id="galleryDetailPopup" onclick="closeGalleryDetail(event)">
+        <div class="image-popup-content" onclick="event.stopPropagation()">
+            <img id="galleryDetailImage" src="" alt="Bild">
+            <div id="galleryDetailCells"></div>
+            <button class="close-popup-btn" onclick="closeGalleryDetail()">Schliessen</button>
+        </div>
+    </div>
+
     <div class="image-popup" id="imagePopup" onclick="closeImagePopup(event)">
         <div class="image-popup-content" id="imagePopupContent" onclick="event.stopPropagation()">
             <img id="popupImage" src="" alt="Bild">
@@ -502,6 +498,9 @@
             </div>
             <div class="refresh-info" id="refreshInfo">Noch 3x wechseln moeglich</div>
         </div>
+
+        <div id="resultBox"></div>
+        <div id="errorBox"></div>
     </div>
 
     <script>
@@ -531,7 +530,6 @@
         let refreshCount = 3;
         let completedPoints = JSON.parse(localStorage.getItem('completedPoints') || '{}');
 
-        // Lade gespeicherte Werte
         function loadSavedState() {
             const savedImages = localStorage.getItem('currentImages');
             const savedRefreshCount = localStorage.getItem('refreshCount');
@@ -550,7 +548,6 @@
             }
         }
 
-        // Speichere aktuellen Zustand
         function saveState() {
             localStorage.setItem('currentImages', JSON.stringify(currentImages));
             localStorage.setItem('refreshCount', refreshCount.toString());
@@ -646,9 +643,9 @@
 
         function showGallery() {
             const grid = document.getElementById('galleryGrid');
-            const congratsDiv = document.getElementById('congratsMessage');
+            const congratsBox = document.getElementById('congratsBox');
             grid.innerHTML = '';
-            congratsDiv.innerHTML = '';
+            congratsBox.innerHTML = '';
             
             const completed = Object.keys(completedPoints).filter(k => completedPoints[k]);
             
@@ -656,7 +653,7 @@
                 grid.innerHTML = '<p style="text-align:center; color:#666;">Noch keine Orte gefunden!</p>';
             } else {
                 if (completed.length === 38) {
-                    congratsDiv.innerHTML = '<div class="congrats-message"><p>HERZLICHEN GLUECKWUNSCH!</p><p>Du hast alle 38 Orte in Leonberg gefunden!</p><p>Du kennst Leonberg jetzt wie deine Westentasche!</p></div>';
+                    congratsBox.innerHTML = '<div class="congrats-message"><p>HERZLICHEN GLUECKWUNSCH!</p><p>Du hast alle 38 Orte in Leonberg gefunden!</p><p>Du kennst Leonberg jetzt wie deine Westentasche!</p></div>';
                 }
                 
                 completed.forEach(pointNum => {
