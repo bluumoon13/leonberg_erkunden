@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leonberg erkunden!</title>
+    <title>Leonberg erkunden</title>
     <style>
         * {
             margin: 0;
@@ -15,28 +15,50 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
         }
 
         .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 30px;
-            max-width: 500px;
-            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             position: relative;
+        }
+
+        .gallery-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .gallery-icon:hover {
+            transform: scale(1.1);
         }
 
         .info-icon {
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background: #667eea;
             color: white;
             border-radius: 50%;
@@ -44,7 +66,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             transition: transform 0.2s;
         }
@@ -53,144 +75,85 @@
             transform: scale(1.1);
         }
 
-        .help-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .help-overlay.active {
-            display: flex;
-        }
-
-        .help-box {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            max-width: 400px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        .help-box h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-
-        .help-box p {
+        .header h1 {
             color: #333;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        .help-box .close-btn {
-            width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .help-box .reset-btn {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .help-box .reset-btn:active {
-            background: #c82333;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h1 {
-            color: #333;
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 10px;
             text-align: center;
+            margin-top: 20px;
         }
 
-        .subtitle {
+        .header .subtitle {
             color: #666;
-            font-size: 14px;
+            font-size: 16px;
             text-align: center;
-            margin-bottom: 30px;
         }
 
-        .input-group {
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
             margin-bottom: 20px;
         }
 
-        label {
-            display: block;
-            color: #333;
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 14px;
+        .image-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
         }
 
-        input[type="number"] {
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-card.selected {
+            border: 4px solid #667eea;
+            transform: scale(1.05);
+        }
+
+        .image-card img {
             width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            transition: border-color 0.3s;
+            height: 150px;
+            object-fit: cover;
         }
 
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #667eea;
+        .image-card .number {
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         button {
-            width: 100%;
-            padding: 18px;
-            font-size: 18px;
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
             font-weight: bold;
             color: white;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s;
         }
 
         button:active {
@@ -200,49 +163,27 @@
         button:disabled {
             background: #ccc;
             cursor: not-allowed;
-            box-shadow: none;
+        }
+
+        .refresh-info {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
         }
 
         .result-box {
-            margin-top: 20px;
+            background: white;
+            border-radius: 15px;
             padding: 20px;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            border-radius: 12px;
-            color: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
             animation: slideIn 0.5s ease-out;
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
         }
 
         .result-image {
             width: 100%;
             border-radius: 12px;
             margin-bottom: 15px;
-        }
-
-        .result-list {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 15px;
-        }
-
-        .result-list ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .result-list li {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 16px;
-        }
-
-        .result-list li:last-child {
-            border-bottom: none;
-        }
-
-        .result-list li strong {
-            display: inline-block;
-            width: 120px;
         }
 
         .cell-grid {
@@ -276,66 +217,129 @@
             background: linear-gradient(135deg, #434343 0%, #000000 100%);
         }
 
-        .distance-btn {
-            margin-top: 15px;
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px solid white;
-            color: white;
+        .message-box {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
             font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
+        }
+
+        .message-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .message-fail {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .distance-btn {
+            width: 100%;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         }
 
         .distance-info {
             margin-top: 10px;
             padding: 10px;
-            background: rgba(255, 255, 255, 0.2);
+            background: #f0f0f0;
             border-radius: 8px;
-            font-size: 16px;
-        }
-
-        .message-text {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-            line-height: 1.5;
             text-align: center;
         }
 
-        .saved-badge {
-            display: inline-block;
-            background: rgba(255, 215, 0, 0.3);
-            color: white;
-            padding: 5px 12px;
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .overlay.active {
+            display: flex;
+        }
+
+        .overlay-content {
+            background: white;
             border-radius: 15px;
-            font-size: 12px;
-            margin-left: 10px;
-            font-weight: bold;
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
         }
 
-        .error {
-            margin-top: 20px;
-            padding: 15px;
-            background: #fee;
-            border: 2px solid #fcc;
-            border-radius: 12px;
-            color: #c33;
-            font-size: 14px;
-            text-align: center;
+        .overlay-content h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 22px;
         }
 
-        .info {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e3f2fd;
-            border-radius: 12px;
-            color: #1565c0;
-            font-size: 14px;
+        .overlay-content p {
+            color: #333;
             line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .close-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #667eea;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: #dc3545;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .gallery-item .number-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .spinner {
@@ -354,6 +358,22 @@
             to { transform: rotate(360deg); }
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -365,129 +385,194 @@
             }
         }
 
-        .icon {
-            font-size: 40px;
-            margin-bottom: 20px;
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            border-radius: 12px;
+            color: #c33;
+            padding: 15px;
             text-align: center;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="help-overlay" id="helpOverlay" onclick="closeHelp()">
-        <div class="help-box" onclick="event.stopPropagation()">
-            <h2>📖 Anleitung</h2>
+    <div class="overlay" id="helpOverlay" onclick="closeHelp()">
+        <div class="overlay-content" onclick="event.stopPropagation()">
+            <h2>Anleitung</h2>
             <p><strong>So funktioniert's:</strong></p>
-            <p>1️⃣ Gib die Nummer des Punktes ein, den du finden möchtest.</p>
-            <p>2️⃣ Drücke auf "Standort prüfen" - du musst ggf. GPS Zugriff erlauben.</p>
-            <p>3️⃣ Bist du zu weit weg, kannst du dir optional als Hilfe die Entfernung anzeigen lassen!</p>
-            <p>4️⃣ Wenn du näher als 20 Meter am Punkt bist, erhältst du farbige Koordinaten.</p>
-            <p>5️⃣ Male die entsprechenden Zellen im Blatt in der passenden Farbe aus. (gelb, braun, schwarz)</p>
-            <p>6️⃣ Wenn du alle Zellen ausgemalt hast, ergibt sich ein Bild.</p>
-            <p><strong>Hinweis:</strong> Erfolgreich gefundene Punkte werden gespeichert und können jederzeit wieder angezeigt werden.</p>
+            <p>1 Gib die Nummer des Punktes ein, den du finden moechtest.</p>
+            <p>2 Druecke auf "Standort pruefen" - du musst ggf. GPS Zugriff erlauben.</p>
+            <p>3 Bist du zu weit weg, kannst du dir optional als Hilfe die Entfernung anzeigen lassen!</p>
+            <p>4 Wenn du naeher als 20 Meter am Punkt bist, erhaeltst du farbige Koordinaten.</p>
+            <p>5 Male die entsprechenden Zellen im Blatt in der passenden Farbe aus. (gelb, braun, schwarz)</p>
+            <p>6 Wenn du alle Zellen ausgemalt hast, ergibt sich ein Bild.</p>
+            <p><strong>Hinweis:</strong> Erfolgreich gefundene Punkte werden gespeichert.</p>
             <button class="close-btn" onclick="closeHelp()">Verstanden</button>
-            <button class="reset-btn" onclick="resetProgress()">🔄 Alle Erfolge zurücksetzen</button>
+            <button class="reset-btn" onclick="resetProgress()">Alle Erfolge zuruecksetzen</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="galleryOverlay" onclick="closeGallery()">
+        <div class="overlay-content" onclick="event.stopPropagation()">
+            <h2>Gefundene Orte</h2>
+            <div class="gallery-grid" id="galleryGrid"></div>
+            <button class="close-btn" onclick="closeGallery()">Schliessen</button>
         </div>
     </div>
 
     <div class="container">
-        <div class="info-icon" onclick="showHelp()" title="Hilfe">i</div>
-        
-        <div class="icon">🗺️</div>
-        <h1>Wie gut kennst du Leonberg?</h1>
-        <p class="subtitle">Das Such- und Findespiel für Juli 🔍</p>
-        
-        <div class="input-group">
-            <label for="pointNumber">Gib eine Punktnummer ein:</label>
-            <input type="number" id="pointNumber" min="1" placeholder="z.B. 1, 2, 3..." />
+        <div class="header">
+            <div class="gallery-icon" onclick="showGallery()" title="Galerie">G</div>
+            <div class="info-icon" onclick="showHelp()" title="Hilfe">i</div>
+            <h1>Wie gut kennst du Leonberg?</h1>
+            <p class="subtitle">Das Such- und Findespiel fuer Juli</p>
         </div>
 
-        <button id="checkBtn" onclick="checkLocation()">
-            Standort prüfen
-        </button>
+        <div class="images-grid" id="imagesGrid"></div>
+
+        <div class="controls">
+            <div class="button-group">
+                <button id="checkBtn" onclick="checkLocation()" disabled>Standort pruefen</button>
+                <button id="refreshBtn" onclick="refreshImages()">Andere Orte anzeigen</button>
+            </div>
+            <div class="refresh-info" id="refreshInfo">Noch 3x wechseln moeglich</div>
+        </div>
 
         <div id="resultBox"></div>
         <div id="errorBox"></div>
-
-        <div class="info">
-            💡 <strong>Hinweis:</strong> Gib die Nummer des Punktes ein und drücke den Button. 
-            Wenn du dich in der Nähe befindest (unter 20 Meter), siehst du das zugehörige Bild und die Details.
-        </div>
     </div>
 
     <script>
-        // Definierte Zielorte mit Nummern, Koordinaten, Bildern, Zellen und Nachrichten
-        const targets = [
-            {
-                number: 1,
-                lat: 48.78955683734332, 
-                lon: 9.009094624129403,
-                image: 'pictures/1.jpg',
-                successMessage: '🎉 Perfekt! Du hast Punkt 1 gefunden!',
-                failMessage: '❌ Noch nicht ganz da. Suche weiter!',
-                cells: [
-                  {'text': 'K15', 'color': 'yellow'},
-                  {'text': 'T20', 'color': 'yellow'},
-                  {'text': 'V8', 'color': 'yellow'},
-                  {'text': 'J26', 'color': 'yellow'},
-                  {'text': 'T1', 'color': 'yellow'},
-                  {'text': 'Q24', 'color': 'yellow'},
-                  {'text': 'P17', 'color': 'yellow'},
-                  {'text': 'T29', 'color': 'yellow'},
-                  {'text': 'K11', 'color': 'yellow'},
-                  {'text': 'M8', 'color': 'yellow'},
-                  {'text': 'F7', 'color': 'yellow'},
-                  {'text': 'K16', 'color': 'yellow'},
-                  {'text': 'F26', 'color': 'yellow'},
-                  {'text': 'Z14', 'color': 'brown'},
-                  {'text': 'L19', 'color': 'brown'},
-                  {'text': 'Z9', 'color': 'brown'},
-                  {'text': 'Z13', 'color': 'brown'},
-                  {'text': 'O13', 'color': 'black'}
-                ]
-            },
-            {
-                number: 2,
-                lat: 48.7100,
-                lon: 9.0100,
-                image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80',
-                successMessage: '✨ Hervorragend! Du bist am richtigen Ort!',
-                failMessage: '🔍 Du bist auf dem richtigen Weg, aber noch nicht da.',
-                cells: [
-                    { text: 'AD30', color: 'yellow' },
-                    { text: 'F12', color: 'brown' },
-                    { text: 'Z99', color: 'black' },
-                    { text: 'K7', color: 'yellow' },
-                    { text: 'M2', color: 'brown' }
-                ]
-            },
-            {
-                number: 3,
-                lat: 48.6950,
-                lon: 9.0000,
-                image: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=800&q=80',
-                successMessage: '🏆 Fantastisch! Das letzte Ziel ist erreicht!',
-                failMessage: '🧭 Fast geschafft! Komm noch ein Stück näher.',
-                cells: [
-                    { text: 'X1', color: 'black' },
-                    { text: 'Y5', color: 'yellow' }
-                ]
-            }
+        const successMessages = [
+            'Fantastisch! Du hast den Punkt gefunden!',
+            'Hervorragend! Du bist am richtigen Ort!',
+            'Perfekt! Das hast du toll gemacht!'
         ];
 
-        // Berechnet die Entfernung zwischen zwei GPS-Koordinaten in Metern (Haversine-Formel)
+        const failMessages = [
+            'Fast geschafft! Du bist auf dem richtigen Weg.',
+            'Noch nicht ganz da. Suche weiter!',
+            'Du kommst naeher! Weiter so!'
+        ];
+
+        // HIER DEINE GPS DATEN EINFUEGEN
+        const gpsData = Array(38).fill({lat:48.7886,lon:9.0090});
+
+        // HIER DEINE ZELL DATEN EINFUEGEN
+        const cellData = Array(38).fill([
+            {'text':'A1','color':'yellow'},
+            {'text':'B2','color':'brown'}
+        ]);
+
+        let selectedPoint = null;
+        let currentImages = [];
+        let refreshCount = 3;
+        let completedPoints = JSON.parse(localStorage.getItem('completedPoints') || '{}');
+
+        function getRandomMessage(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // Erdradius in Metern
-            const φ1 = lat1 * Math.PI / 180;
-            const φ2 = lat2 * Math.PI / 180;
-            const Δφ = (lat2 - lat1) * Math.PI / 180;
-            const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                      Math.cos(φ1) * Math.cos(φ2) *
-                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const R = 6371e3;
+            const p1 = lat1 * Math.PI / 180;
+            const p2 = lat2 * Math.PI / 180;
+            const dp = (lat2 - lat1) * Math.PI / 180;
+            const dl = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dp/2) * Math.sin(dp/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl/2) * Math.sin(dl/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
 
-            return R * c; // Entfernung in Metern
+        function getAvailablePoints() {
+            const all = Array.from({length: 38}, (_, i) => i + 1);
+            return all.filter(p => !completedPoints[p]);
+        }
+
+        function getRandomPoints(count) {
+            const available = getAvailablePoints();
+            if (available.length === 0) return [];
+            const shuffled = available.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, Math.min(count, available.length));
+        }
+
+        function displayImages() {
+            const grid = document.getElementById('imagesGrid');
+            grid.innerHTML = '';
+            currentImages.forEach(pointNum => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                card.onclick = () => selectImage(pointNum);
+                card.innerHTML = '<img src="pictures/' + pointNum + '.jpg" alt="Punkt ' + pointNum + '"><div class="number">Punkt ' + pointNum + '</div>';
+                grid.appendChild(card);
+            });
+        }
+
+        function selectImage(pointNum) {
+            selectedPoint = pointNum;
+            document.querySelectorAll('.image-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById('checkBtn').disabled = false;
+        }
+
+        function refreshImages() {
+            if (refreshCount <= 0) return;
+            refreshCount--;
+            currentImages = getRandomPoints(5);
+            displayImages();
+            selectedPoint = null;
+            document.getElementById('checkBtn').disabled = true;
+            document.getElementById('refreshInfo').textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
+            document.getElementById('refreshBtn').disabled = refreshCount === 0;
+            document.getElementById('resultBox').innerHTML = '';
+            document.getElementById('errorBox').innerHTML = '';
+        }
+
+        function saveSuccess(pointNumber) {
+            completedPoints[pointNumber] = true;
+            localStorage.setItem('completedPoints', JSON.stringify(completedPoints));
+        }
+
+        function showDistance(dist, pointNumber) {
+            document.getElementById('distanceInfo').innerHTML = '<div class="distance-info">Entfernung: ' + Math.round(dist) + ' Meter von Punkt ' + pointNumber + '</div>';
+            document.getElementById('distanceBtn').style.display = 'none';
+        }
+
+        function showGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+            const completed = Object.keys(completedPoints).filter(k => completedPoints[k]);
+            if (completed.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; color:#666;">Noch keine Orte gefunden!</p>';
+            } else {
+                completed.forEach(pointNum => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.onclick = () => showCompletedPoint(parseInt(pointNum));
+                    item.innerHTML = '<img src="pictures/' + pointNum + '.jpg" alt="Punkt ' + pointNum + '"><div class="number-badge">' + pointNum + '</div>';
+                    grid.appendChild(item);
+                });
+            }
+            document.getElementById('galleryOverlay').classList.add('active');
+        }
+
+        function closeGallery() {
+            document.getElementById('galleryOverlay').classList.remove('active');
+        }
+
+        function showCompletedPoint(pointNum) {
+            closeGallery();
+            const cells = cellData[pointNum - 1];
+            const imagePath = 'pictures/' + pointNum + '.jpg';
+            let resultHtml = '<div class="result-box"><img src="' + imagePath + '" alt="Punkt ' + pointNum + '" class="result-image"><div class="message-box message-success">Punkt ' + pointNum + ' - Bereits gefunden!</div><div class="cell-grid">';
+            for (const cell of cells) {
+                resultHtml += '<div class="cell cell-' + cell.color + '">' + cell.text + '</div>';
+            }
+            resultHtml += '</div></div>';
+            document.getElementById('resultBox').innerHTML = resultHtml;
         }
 
         function showHelp() {
@@ -499,126 +584,64 @@
         }
 
         function resetProgress() {
-            if (confirm('Möchtest du wirklich alle gefundenen Punkte zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+            if (confirm('Moechtest du wirklich alle gefundenen Punkte zuruecksetzen?')) {
                 localStorage.removeItem('completedPoints');
-                location.reload(); // Seite neu laden
+                location.reload();
             }
-        }
-
-        // Speichert erfolgreiche Punkte
-        const completedPoints = JSON.parse(localStorage.getItem('completedPoints') || '{}');
-
-        function saveSuccess(pointNumber) {
-            completedPoints[pointNumber] = true;
-            localStorage.setItem('completedPoints', JSON.stringify(completedPoints));
-        }
-
-        function isPointCompleted(pointNumber) {
-            return completedPoints[pointNumber] === true;
-        }
-
-        function showDistance(dist, pointNumber) {
-            const distInfo = document.getElementById('distanceInfo');
-            distInfo.innerHTML = `<div class="distance-info">📍 Entfernung: ${Math.round(dist)} Meter von Punkt ${pointNumber}</div>`;
-            document.getElementById('distanceBtn').style.display = 'none';
         }
 
         function checkLocation() {
+            if (!selectedPoint) return;
             const btn = document.getElementById('checkBtn');
             const resultBox = document.getElementById('resultBox');
             const errorBox = document.getElementById('errorBox');
-            const pointNumber = parseInt(document.getElementById('pointNumber').value);
-
-            // Reset
             resultBox.innerHTML = '';
             errorBox.innerHTML = '';
-
-            // Validierung der Punktnummer
-            if (!pointNumber || pointNumber < 1) {
-                errorBox.innerHTML = '<div class="error">Bitte gib eine gültige Punktnummer ein!</div>';
-                return;
-            }
-
-            // Finde den Punkt mit der eingegebenen Nummer
-            const target = targets.find(t => t.number === pointNumber);
-            
-            if (!target) {
-                errorBox.innerHTML = '<div class="error">Punkt mit dieser Nummer existiert nicht!</div>';
-                return;
-            }
-
-            // Prüfe, ob der Punkt bereits erfolgreich abgeschlossen wurde
-            if (isPointCompleted(pointNumber)) {
-                // Zeige sofort die Zellen ohne GPS-Prüfung
-                let resultHtml = `
-                    <div class="result-box">
-                        <img src="${target.image}" alt="Punkt ${target.number}" class="result-image">
-                        <div class="message-text">${target.successMessage} <span class="saved-badge">✓ Bereits gefunden</span></div>
-                        <div class="cell-grid">
-                `;
-                for (const cell of target.cells) {
-                    resultHtml += `<div class="cell cell-${cell.color}">${cell.text}</div>`;
-                }
-                resultHtml += '</div></div>';
-                resultBox.innerHTML = resultHtml;
-                return;
-            }
-
+            const idx = selectedPoint - 1;
+            const target = gpsData[idx];
+            const cells = cellData[idx];
+            const imagePath = 'pictures/' + selectedPoint + '.jpg';
             if (!navigator.geolocation) {
-                errorBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstützt</div>';
+                errorBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstuetzt</div>';
                 return;
             }
-
-            // Button deaktivieren und Ladeanimation zeigen
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span>Prüfe Position...';
-
+            btn.innerHTML = '<span class="spinner"></span>Pruefe Position...';
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-
                     const dist = calculateDistance(lat, lon, target.lat, target.lon);
-                    
-                    // Bild wird immer angezeigt
-                    let resultHtml = `
-                        <div class="result-box">
-                            <img src="${target.image}" alt="Punkt ${target.number}" class="result-image">
-                    `;
-                    
+                    let resultHtml = '<div class="result-box"><img src="' + imagePath + '" alt="Punkt ' + selectedPoint + '" class="result-image">';
                     if (dist < 20) {
-                        // Erfolg: Speichere den Erfolg und zeige Zellen
-                        saveSuccess(pointNumber);
-                        resultHtml += `<div class="message-text">${target.successMessage}</div>`;
-                        resultHtml += '<div class="cell-grid">';
-                        for (const cell of target.cells) {
-                            resultHtml += `<div class="cell cell-${cell.color}">${cell.text}</div>`;
+                        saveSuccess(selectedPoint);
+                        resultHtml += '<div class="message-box message-success">' + getRandomMessage(successMessages) + '</div><div class="cell-grid">';
+                        for (const cell of cells) {
+                            resultHtml += '<div class="cell cell-' + cell.color + '">' + cell.text + '</div>';
                         }
                         resultHtml += '</div>';
+                        const newPoints = getRandomPoints(1);
+                        if (newPoints.length > 0) {
+                            const index = currentImages.indexOf(selectedPoint);
+                            if (index !== -1) {
+                                currentImages[index] = newPoints[0];
+                                displayImages();
+                            }
+                        }
+                        selectedPoint = null;
+                        btn.disabled = true;
                     } else {
-                        // Misserfolg: Zeige Fehlermeldung und Button zum Anzeigen der Entfernung
-                        resultHtml += `<div class="message-text">${target.failMessage}</div>`;
-                        resultHtml += `
-                            <button class="distance-btn" id="distanceBtn" onclick="showDistance(${dist}, ${pointNumber})">
-                                Entfernung anzeigen
-                            </button>
-                            <div id="distanceInfo"></div>
-                        `;
+                        resultHtml += '<div class="message-box message-fail">' + getRandomMessage(failMessages) + '</div><button class="distance-btn" id="distanceBtn" onclick="showDistance(' + dist + ', ' + selectedPoint + ')">Entfernung anzeigen</button><div id="distanceInfo"></div>';
                     }
-                    
                     resultHtml += '</div>';
                     resultBox.innerHTML = resultHtml;
-
-                    // Button wieder aktivieren
                     btn.disabled = false;
-                    btn.innerHTML = 'Standort prüfen';
+                    btn.innerHTML = 'Standort pruefen';
                 },
                 function(error) {
-                    errorBox.innerHTML = `<div class="error">GPS-Fehler: ${error.message}<br><br>Bitte stelle sicher, dass du die Standortberechtigung erteilt hast.</div>`;
-                    
-                    // Button wieder aktivieren
+                    errorBox.innerHTML = '<div class="error">GPS-Fehler: ' + error.message + '<br><br>Bitte stelle sicher, dass du die Standortberechtigung erteilt hast.</div>';
                     btn.disabled = false;
-                    btn.innerHTML = 'Standort prüfen';
+                    btn.innerHTML = 'Standort pruefen';
                 },
                 {
                     enableHighAccuracy: true,
@@ -628,12 +651,10 @@
             );
         }
 
-        // Enter-Taste im Input-Feld
-        document.getElementById('pointNumber').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkLocation();
-            }
-        });
+        window.onload = function() {
+            currentImages = getRandomPoints(5);
+            displayImages();
+        };
     </script>
 </body>
 </html>
