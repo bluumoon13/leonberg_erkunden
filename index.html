@@ -533,8 +533,8 @@
         <div class="overlay-content" onclick="event.stopPropagation()">
             <h2>Anleitung</h2>
             <p><strong>So funktioniert's:</strong></p>
-            <p>Klicke auf ein Bild um es größer zu machen.</p>
-            <p>Wenn du den Ort gefunden hast, drücke auf "Standort prüfen" - du musst ggf. GPS Zugriff erlauben.</p>
+            <p>Klicke auf ein Bild, um es größer zu machen. Deine Aufgabe ist es, den Ort zu finden.</p>
+            <p>Wenn du am Ort bist, drücke auf "Standort prüfen" - du musst ggf. GPS Zugriff erlauben.</p>
             <p>Bist du zu weit weg, kannst du dir optional als Hilfe die Entfernung anzeigen lassen!</p>
             <p>Wenn du näher als 20 Meter am Punkt bist, erhältst du farbige Koordinaten.</p>
             <p>Male die entsprechenden Zellen im Blatt in der passenden Farbe aus. (gelb, braun, schwarz)</p>
@@ -565,7 +565,7 @@
     <div class="image-popup" id="imagePopup" onclick="closeImagePopup(event)">
         <div class="image-popup-content" id="imagePopupContent" onclick="event.stopPropagation()">
             <img id="popupImage" src="" alt="Bild">
-            <button onclick="checkLocation()">Standort pruefen</button>
+            <button onclick="checkLocation()">Standort prüfen</button>
             <div id="popupResultBox"></div>
             <button class="close-popup-btn" onclick="closeImagePopup()">Schliessen</button>
         </div>
@@ -607,16 +607,16 @@
         ];
 
         const failMessages = [
-            'Fast geschafft! Du bist auf dem richtigen Weg.',
+            'Fast geschafft! Aber noch nicht da.',
             'Noch nicht ganz da. Suche weiter!',
-            'Du kommst naeher! Weiter so!',
-            'Fast am Ziel! Noch ein paar Schritte.',
-            'Du bist nah dran! Halte durch!',
-            'Gute Richtung! Komm noch naeher.',
-            'Noch ein Stueck! Du schaffst das!',
-            'Bleib dran! Es ist nicht mehr weit.',
-            'Schau dich um! Der Punkt ist in der Naehe.',
-            'Versuch es nochmal! Du bist nah dran!'
+            'Du musst näher ran! Nicht aufgeben!',
+            'Noch nicht am Ziel!',
+            'Du findest den Ort! Halte durch!',
+            'Nicht ganz! Komm noch näher.',
+            'Noch ein Stück! Du schaffst das!',
+            'Bleib dran! Du findest den Ort bestimmt.',
+            'Schau dich um und suche den Ort!',
+            'Versuch es weiter! Du bist noch nicht am Ziel!'
         ];
 
         // HIER DEINE GPS DATEN EINFUEGEN
@@ -1323,7 +1323,7 @@
                 grid.innerHTML = '<p style="text-align:center; color:#666;">Noch keine Orte gefunden!</p>';
             } else {
                 if (completed.length === 38) {
-                    congratsBox.innerHTML = '<div class="congrats-message"><p>HERZLICHEN GLUECKWUNSCH!</p><p>Du hast alle 38 Orte in Leonberg gefunden!</p><p>Du kennst Leonberg jetzt wie deine Westentasche!</p></div>';
+                    congratsBox.innerHTML = '<div class="congrats-message"><p>HERZLICHEN GLÜCKWUNSCH!</p><p>Du hast alle 38 Orte in Leonberg gefunden!</p><p>Du kennst Leonberg jetzt wie deine Westentasche!</p></div>';
                 }
                 
                 completed.forEach(pointNum => {
@@ -1372,7 +1372,7 @@
         }
 
         function resetProgress() {
-            if (confirm('Moechtest du wirklich alle gefundenen Punkte zuruecksetzen?')) {
+            if (confirm('Möchtest du wirklich alle gefundenen Punkte zurücksetzen?')) {
                 localStorage.removeItem('completedPoints');
                 refreshCount = 4;
                 refreshImages();
@@ -1389,11 +1389,11 @@
             const target = gpsData[idx];
             const cells = cellData[idx];
             if (!navigator.geolocation) {
-                popupResultBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstuetzt</div>';
+                popupResultBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstützt</div>';
                 return;
             }
             checkBtn.disabled = true;
-            checkBtn.innerHTML = '<span class="spinner"></span>Pruefe Position...';
+            checkBtn.innerHTML = '<span class="spinner"></span>Prüfe Position...';
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     const lat = position.coords.latitude;
@@ -1421,12 +1421,12 @@
                     }
                     popupResultBox.innerHTML = resultHtml;
                     checkBtn.disabled = false;
-                    checkBtn.innerHTML = 'Standort pruefen';
+                    checkBtn.innerHTML = 'Standort prüfen';
                 },
                 function(error) {
                     popupResultBox.innerHTML = '<div class="error">GPS-Fehler: ' + error.message + '<br><br>Bitte stelle sicher, dass du die Standortberechtigung erteilt hast.</div>';
                     checkBtn.disabled = false;
-                    checkBtn.innerHTML = 'Standort pruefen';
+                    checkBtn.innerHTML = 'Standort prüfen';
                 },
                 {
                     enableHighAccuracy: true,
