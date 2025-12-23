@@ -44,7 +44,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
             transition: transform 0.2s;
         }
@@ -66,7 +66,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
             transition: transform 0.2s;
         }
@@ -83,10 +83,18 @@
             margin-top: 20px;
         }
 
+        .header h1::before {
+            content: '🗺️ ';
+        }
+
         .header .subtitle {
             color: #666;
             font-size: 16px;
             text-align: center;
+        }
+
+        .header .subtitle::before {
+            content: '🔍 ';
         }
 
         .images-grid {
@@ -148,6 +156,14 @@
             transition: transform 0.2s;
         }
 
+        button::before {
+            margin-right: 8px;
+        }
+
+        #refreshBtn::before {
+            content: '🔄 ';
+        }
+
         button:active {
             transform: scale(0.98);
         }
@@ -162,6 +178,38 @@
             color: #666;
             font-size: 14px;
             margin-top: 10px;
+        }
+
+        .refresh-info::before {
+            content: 'ℹ️ ';
+        }
+
+        .overlay-content p strong {
+            font-weight: bold;
+        }
+
+        .overlay-content p:nth-of-type(2)::before {
+            content: '📍 ';
+        }
+
+        .overlay-content p:nth-of-type(3)::before {
+            content: '📲 ';
+        }
+
+        .overlay-content p:nth-of-type(4)::before {
+            content: '📏 ';
+        }
+
+        .overlay-content p:nth-of-type(5)::before {
+            content: '🎨 ';
+        }
+
+        .overlay-content p:nth-of-type(6)::before {
+            content: '🖍️ ';
+        }
+
+        .overlay-content p:nth-of-type(7)::before {
+            content: '🖼️ ';
         }
 
         .result-box {
@@ -210,21 +258,32 @@
         }
 
         .message-box {
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
             margin-bottom: 15px;
-            font-weight: bold;
+            background: white;
+            color: #333;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
         }
 
         .message-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
+            border-color: #38ef7d;
+        }
+
+        .message-success::before {
+            content: '✅ ';
+            font-size: 24px;
         }
 
         .message-fail {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
+            border-color: #f5576c;
+        }
+
+        .message-fail::before {
+            content: '📍 ';
+            font-size: 24px;
         }
 
         .distance-btn {
@@ -233,12 +292,20 @@
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         }
 
+        .distance-btn::before {
+            content: '📏 ';
+        }
+
         .distance-info {
             margin-top: 10px;
             padding: 10px;
             background: #f0f0f0;
             border-radius: 8px;
             text-align: center;
+        }
+
+        .distance-info::before {
+            content: '📍 ';
         }
 
         .overlay {
@@ -275,6 +342,16 @@
             color: #667eea;
             margin-bottom: 15px;
             font-size: 22px;
+        }
+
+        .overlay-content h2::before {
+            content: '📖 ';
+            margin-right: 8px;
+        }
+
+        #galleryOverlay h2::before {
+            content: '🏆 ';
+            margin-right: 8px;
         }
 
         .overlay-content p {
@@ -380,6 +457,13 @@
             animation: slideIn 0.5s ease-out;
         }
 
+        .congrats-message::before {
+            content: '🎉';
+            font-size: 48px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
         .congrats-message p {
             margin: 10px 0;
             color: white;
@@ -437,6 +521,11 @@
             text-align: center;
             margin-top: 15px;
         }
+
+        .error::before {
+            content: '⚠️ ';
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
@@ -444,15 +533,15 @@
         <div class="overlay-content" onclick="event.stopPropagation()">
             <h2>Anleitung</h2>
             <p><strong>So funktioniert's:</strong></p>
-            <p>1 Gib die Nummer des Punktes ein, den du finden moechtest.</p>
-            <p>2 Druecke auf "Standort pruefen" - du musst ggf. GPS Zugriff erlauben.</p>
-            <p>3 Bist du zu weit weg, kannst du dir optional als Hilfe die Entfernung anzeigen lassen!</p>
-            <p>4 Wenn du naeher als 20 Meter am Punkt bist, erhaeltst du farbige Koordinaten.</p>
-            <p>5 Male die entsprechenden Zellen im Blatt in der passenden Farbe aus. (gelb, braun, schwarz)</p>
-            <p>6 Wenn du alle Zellen ausgemalt hast, ergibt sich ein Bild.</p>
+            <p>Gib die Nummer des Punktes ein, den du finden möchtest.</p>
+            <p>Drücke auf "Standort prüfen" - du musst ggf. GPS Zugriff erlauben.</p>
+            <p>Bist du zu weit weg, kannst du dir optional als Hilfe die Entfernung anzeigen lassen!</p>
+            <p>Wenn du näher als 20 Meter am Punkt bist, erhältst du farbige Koordinaten.</p>
+            <p>Male die entsprechenden Zellen im Blatt in der passenden Farbe aus. (gelb, braun, schwarz)</p>
+            <p>Wenn du alle Zellen ausgemalt hast, ergibt sich ein Bild.</p>
             <p><strong>Hinweis:</strong> Erfolgreich gefundene Punkte werden gespeichert.</p>
             <button class="close-btn" onclick="closeHelp()">Verstanden</button>
-            <button class="reset-btn" onclick="resetProgress()">Alle Erfolge zuruecksetzen</button>
+            <button class="reset-btn" onclick="resetProgress()">Alle Erfolge zurücksetzen</button>
         </div>
     </div>
 
@@ -484,10 +573,10 @@
 
     <div class="container">
         <div class="header">
-            <div class="gallery-icon" onclick="showGallery()" title="Galerie">G</div>
-            <div class="info-icon" onclick="showHelp()" title="Hilfe">i</div>
+            <div class="gallery-icon" onclick="showGallery()" title="Galerie">🏆</div>
+            <div class="info-icon" onclick="showHelp()" title="Hilfe">ℹ️</div>
             <h1>Wie gut kennst du Leonberg?</h1>
-            <p class="subtitle">Das Such- und Findespiel fuer Juli</p>
+            <p class="subtitle">Das Such- und Findespiel für Juli</p>
         </div>
 
         <div class="images-grid" id="imagesGrid"></div>
@@ -496,7 +585,7 @@
             <div class="button-group">
                 <button id="refreshBtn" onclick="refreshImages()">Andere Orte anzeigen</button>
             </div>
-            <div class="refresh-info" id="refreshInfo">Noch 3x wechseln moeglich</div>
+            <div class="refresh-info" id="refreshInfo">Noch 3x Wechseln möglich</div>
         </div>
 
         <div id="resultBox"></div>
@@ -507,23 +596,604 @@
         const successMessages = [
             'Fantastisch! Du hast den Punkt gefunden!',
             'Hervorragend! Du bist am richtigen Ort!',
-            'Perfekt! Das hast du toll gemacht!'
+            'Perfekt! Das hast du toll gemacht!',
+            'Super! Du hast es geschafft!',
+            'Ausgezeichnet! Weiter so!',
+            'Grossartig! Punkt erreicht!',
+            'Wunderbar! Genau richtig!',
+            'Prima! Du bist ein Naturtalent!',
+            'Toll gemacht! Das war klasse!',
+            'Bravo! Ein voller Erfolg!'
         ];
 
         const failMessages = [
             'Fast geschafft! Du bist auf dem richtigen Weg.',
             'Noch nicht ganz da. Suche weiter!',
-            'Du kommst naeher! Weiter so!'
+            'Du kommst naeher! Weiter so!',
+            'Fast am Ziel! Noch ein paar Schritte.',
+            'Du bist nah dran! Halte durch!',
+            'Gute Richtung! Komm noch naeher.',
+            'Noch ein Stueck! Du schaffst das!',
+            'Bleib dran! Es ist nicht mehr weit.',
+            'Schau dich um! Der Punkt ist in der Naehe.',
+            'Versuch es nochmal! Du bist nah dran!'
         ];
 
         // HIER DEINE GPS DATEN EINFUEGEN
-        const gpsData = Array(38).fill({lat:48.7886,lon:9.0090});
+        const gpsData = [
+            {lat:48.78861903858931,lon:9.009085261409474},
+            {lat:48.789112305501625,lon:9.007487617746698},
+            {lat:48.788864497238,lon:9.00666864499799},
+            {lat:48.788669603332714,lon:9.005802046076152},
+            {lat:48.787775799156876,lon:9.004964816122987},
+            {lat:48.78710078029472,lon:9.00718192082144},
+            {lat:48.78842110405882,lon:9.002163517202446},
+            {lat:48.7894075959148,lon:9.001413302741314},
+            {lat:48.790119663205594,lon:9.001178203103281},
+            {lat:48.790818298845565,lon:9.002940374950688},
+            {lat:48.79125677117218,lon:9.003746847521676},
+            {lat:48.79117342469226,lon:9.006380531249619},
+            {lat:48.791490700698496,lon:9.007028949338457},
+            {lat:48.79165156467588,lon:9.010719661955278},
+            {lat:48.7918529331142,lon:9.012243175678408},
+            {lat:48.79297599460584,lon:9.014064674954993},
+            {lat:48.79302579821827,lon:9.015800804921048},
+            {lat:48.79434789826222,lon:9.013932534903972},
+            {lat:48.794427591260515,lon:9.015074732709373},
+            {lat:48.79462739180437,lon:9.016177917197101},
+            {lat:48.79432999510279,lon:9.017030704923835},
+            {lat:48.792494599978106,lon:9.016541847156628},
+            {lat:48.7925362630451,lon:9.015445833077607},
+            {lat:48.792240563919506,lon:9.018029104198742},
+            {lat:48.792391799515556,lon:9.02179463380372},
+            {lat:48.78968351161847,lon:9.02301110601316},
+            {lat:48.78911920757805,lon:9.018462804923702},
+            {lat:48.78910815978744,lon:9.017097344271553},
+            {lat:48.789305869864684,lon:9.015800233071667},
+            {lat:48.789371637746015,lon:9.013527091203127},
+            {lat:48.78964620116577,lon:9.01174067495175},
+            {lat:48.79001250424404,lon:9.011411949335827},
+            {lat:48.790173000120525,lon:9.010725474951373},
+            {lat:48.78978000089656,lon:9.010116874952645},
+            {lat:48.78980957460059,lon:9.009866876400604},
+            {lat:48.789283970610846,lon:9.009617646433187},
+            {lat:48.77616208052065,lon:9.000336677925752},
+            {lat:48.78657873865252,lon:9.008827726682297}
+        ];
 
         // HIER DEINE ZELL DATEN EINFUEGEN
-        const cellData = Array(38).fill([
-            {'text':'A1','color':'yellow'},
-            {'text':'B2','color':'brown'}
-        ]);
+        const cellData = [[{'text': 'K17', 'color': 'brown'},
+          {'text': 'I14', 'color': 'brown'},
+          {'text': 'L11', 'color': 'brown'},
+          {'text': 'Q10', 'color': 'yellow'},
+          {'text': 'V20', 'color': 'yellow'},
+          {'text': 'J9', 'color': 'yellow'},
+          {'text': 'J20', 'color': 'yellow'},
+          {'text': 'P24', 'color': 'yellow'},
+          {'text': 'Z15', 'color': 'yellow'},
+          {'text': 'N16', 'color': 'yellow'},
+          {'text': 'L8', 'color': 'yellow'},
+          {'text': 'M25', 'color': 'yellow'},
+          {'text': 'L7', 'color': 'yellow'},
+          {'text': 'J11', 'color': 'yellow'}],
+         [{'text': 'X13', 'color': 'brown'},
+          {'text': 'P6', 'color': 'brown'},
+          {'text': 'I16', 'color': 'brown'},
+          {'text': 'I15', 'color': 'brown'},
+          {'text': 'H5', 'color': 'brown'},
+          {'text': 'M29', 'color': 'yellow'},
+          {'text': 'Y2', 'color': 'yellow'},
+          {'text': 'Y18', 'color': 'yellow'},
+          {'text': 'P26', 'color': 'yellow'},
+          {'text': 'S8', 'color': 'yellow'},
+          {'text': 'K22', 'color': 'yellow'},
+          {'text': 'S15', 'color': 'yellow'},
+          {'text': 'J26', 'color': 'yellow'},
+          {'text': 'X4', 'color': 'yellow'}],
+         [{'text': 'Q3', 'color': 'brown'},
+          {'text': 'P21', 'color': 'brown'},
+          {'text': 'T17', 'color': 'brown'},
+          {'text': 'S20', 'color': 'brown'},
+          {'text': 'Z13', 'color': 'brown'},
+          {'text': 'X6', 'color': 'brown'},
+          {'text': 'V7', 'color': 'yellow'},
+          {'text': 'R27', 'color': 'yellow'},
+          {'text': 'V22', 'color': 'yellow'},
+          {'text': 'M9', 'color': 'yellow'},
+          {'text': 'O25', 'color': 'yellow'},
+          {'text': 'J21', 'color': 'yellow'},
+          {'text': 'P10', 'color': 'yellow'},
+          {'text': 'P13', 'color': 'black'}],
+         [{'text': 'K10', 'color': 'yellow'},
+          {'text': 'R24', 'color': 'yellow'},
+          {'text': 'O7', 'color': 'yellow'},
+          {'text': 'W6', 'color': 'yellow'},
+          {'text': 'E8', 'color': 'yellow'},
+          {'text': 'V24', 'color': 'yellow'},
+          {'text': 'H28', 'color': 'yellow'},
+          {'text': 'U19', 'color': 'brown'},
+          {'text': 'X5', 'color': 'brown'},
+          {'text': 'N18', 'color': 'brown'},
+          {'text': 'R18', 'color': 'brown'},
+          {'text': 'Q18', 'color': 'brown'},
+          {'text': 'P19', 'color': 'brown'},
+          {'text': 'S5', 'color': 'brown'}],
+         [{'text': 'M11', 'color': 'brown'},
+          {'text': 'I7', 'color': 'brown'},
+          {'text': 'P18', 'color': 'brown'},
+          {'text': 'U9', 'color': 'yellow'},
+          {'text': 'L12', 'color': 'yellow'},
+          {'text': 'M21', 'color': 'yellow'},
+          {'text': 'T7', 'color': 'yellow'},
+          {'text': 'U5', 'color': 'yellow'},
+          {'text': 'K12', 'color': 'yellow'},
+          {'text': 'V25', 'color': 'yellow'},
+          {'text': 'S1', 'color': 'yellow'},
+          {'text': 'S6', 'color': 'yellow'},
+          {'text': 'T30', 'color': 'yellow'},
+          {'text': 'R21', 'color': 'yellow'}],
+         [{'text': 'Y16', 'color': 'yellow'},
+          {'text': 'T27', 'color': 'yellow'},
+          {'text': 'N13', 'color': 'yellow'},
+          {'text': 'V21', 'color': 'yellow'},
+          {'text': 'O16', 'color': 'yellow'},
+          {'text': 'F25', 'color': 'yellow'},
+          {'text': 'M26', 'color': 'yellow'},
+          {'text': 'Q11', 'color': 'yellow'},
+          {'text': 'M18', 'color': 'brown'},
+          {'text': 'T18', 'color': 'brown'},
+          {'text': 'F13', 'color': 'brown'},
+          {'text': 'I4', 'color': 'brown'},
+          {'text': 'I9', 'color': 'brown'},
+          {'text': 'X16', 'color': 'brown'}],
+         [{'text': 'L23', 'color': 'yellow'},
+          {'text': 'J3', 'color': 'yellow'},
+          {'text': 'T9', 'color': 'yellow'},
+          {'text': 'T12', 'color': 'yellow'},
+          {'text': 'K5', 'color': 'yellow'},
+          {'text': 'J24', 'color': 'yellow'},
+          {'text': 'L30', 'color': 'yellow'},
+          {'text': 'X12', 'color': 'yellow'},
+          {'text': 'O9', 'color': 'yellow'},
+          {'text': 'N21', 'color': 'yellow'},
+          {'text': 'S25', 'color': 'yellow'},
+          {'text': 'L27', 'color': 'yellow'},
+          {'text': 'K14', 'color': 'yellow'},
+          {'text': 'O3', 'color': 'brown'}],
+         [{'text': 'J10', 'color': 'yellow'},
+          {'text': 'T25', 'color': 'yellow'},
+          {'text': 'R23', 'color': 'yellow'},
+          {'text': 'G16', 'color': 'yellow'},
+          {'text': 'Q24', 'color': 'yellow'},
+          {'text': 'L15', 'color': 'yellow'},
+          {'text': 'O17', 'color': 'yellow'},
+          {'text': 'L1', 'color': 'yellow'},
+          {'text': 'N26', 'color': 'yellow'},
+          {'text': 'Q22', 'color': 'yellow'},
+          {'text': 'H6', 'color': 'brown'},
+          {'text': 'E18', 'color': 'brown'},
+          {'text': 'T3', 'color': 'brown'},
+          {'text': 'K19', 'color': 'brown'}],
+         [{'text': 'Y7', 'color': 'brown'},
+          {'text': 'L17', 'color': 'brown'},
+          {'text': 'O20', 'color': 'brown'},
+          {'text': 'N7', 'color': 'brown'},
+          {'text': 'N25', 'color': 'yellow'},
+          {'text': 'G19', 'color': 'yellow'},
+          {'text': 'Z7', 'color': 'yellow'},
+          {'text': 'J4', 'color': 'yellow'},
+          {'text': 'J29', 'color': 'yellow'},
+          {'text': 'K16', 'color': 'yellow'},
+          {'text': 'K4', 'color': 'yellow'},
+          {'text': 'R12', 'color': 'yellow'},
+          {'text': 'J12', 'color': 'yellow'},
+          {'text': 'H27', 'color': 'yellow'}],
+         [{'text': 'G26', 'color': 'yellow'},
+          {'text': 'R14', 'color': 'yellow'},
+          {'text': 'T16', 'color': 'yellow'},
+          {'text': 'T22', 'color': 'yellow'},
+          {'text': 'R7', 'color': 'yellow'},
+          {'text': 'M15', 'color': 'yellow'},
+          {'text': 'J7', 'color': 'yellow'},
+          {'text': 'V4', 'color': 'yellow'},
+          {'text': 'E25', 'color': 'yellow'},
+          {'text': 'R8', 'color': 'yellow'},
+          {'text': 'X14', 'color': 'brown'},
+          {'text': 'W13', 'color': 'brown'},
+          {'text': 'H12', 'color': 'brown'},
+          {'text': 'O13', 'color': 'black'}],
+         [{'text': 'G25', 'color': 'yellow'},
+          {'text': 'R9', 'color': 'yellow'},
+          {'text': 'K11', 'color': 'yellow'},
+          {'text': 'M8', 'color': 'yellow'},
+          {'text': 'R1', 'color': 'yellow'},
+          {'text': 'G20', 'color': 'yellow'},
+          {'text': 'Q7', 'color': 'yellow'},
+          {'text': 'L22', 'color': 'yellow'},
+          {'text': 'U29', 'color': 'yellow'},
+          {'text': 'W24', 'color': 'yellow'},
+          {'text': 'O2', 'color': 'brown'},
+          {'text': 'X11', 'color': 'brown'},
+          {'text': 'P4', 'color': 'brown'},
+          {'text': 'S3', 'color': 'brown'}],
+         [{'text': 'T19', 'color': 'brown'},
+          {'text': 'H8', 'color': 'brown'},
+          {'text': 'I5', 'color': 'brown'},
+          {'text': 'F10', 'color': 'brown'},
+          {'text': 'J16', 'color': 'brown'},
+          {'text': 'G8', 'color': 'brown'},
+          {'text': 'P12', 'color': 'yellow'},
+          {'text': 'G5', 'color': 'yellow'},
+          {'text': 'I11', 'color': 'yellow'},
+          {'text': 'F6', 'color': 'yellow'},
+          {'text': 'V26', 'color': 'yellow'},
+          {'text': 'T14', 'color': 'yellow'},
+          {'text': 'G27', 'color': 'yellow'},
+          {'text': 'V15', 'color': 'yellow'}],
+         [{'text': 'U17', 'color': 'brown'},
+          {'text': 'Y9', 'color': 'brown'},
+          {'text': 'P5', 'color': 'brown'},
+          {'text': 'H17', 'color': 'brown'},
+          {'text': 'X8', 'color': 'brown'},
+          {'text': 'W20', 'color': 'yellow'},
+          {'text': 'N6', 'color': 'yellow'},
+          {'text': 'S26', 'color': 'yellow'},
+          {'text': 'E20', 'color': 'yellow'},
+          {'text': 'K23', 'color': 'yellow'},
+          {'text': 'U27', 'color': 'yellow'},
+          {'text': 'Q12', 'color': 'yellow'},
+          {'text': 'S24', 'color': 'yellow'},
+          {'text': 'P22', 'color': 'yellow'}],
+         [{'text': 'U15', 'color': 'yellow'},
+          {'text': 'K8', 'color': 'yellow'},
+          {'text': 'S27', 'color': 'yellow'},
+          {'text': 'S12', 'color': 'yellow'},
+          {'text': 'M20', 'color': 'yellow'},
+          {'text': 'O23', 'color': 'yellow'},
+          {'text': 'J25', 'color': 'yellow'},
+          {'text': 'F14', 'color': 'yellow'},
+          {'text': 'L14', 'color': 'yellow'},
+          {'text': 'F26', 'color': 'yellow'},
+          {'text': 'I25', 'color': 'yellow'},
+          {'text': 'U16', 'color': 'yellow'},
+          {'text': 'G10', 'color': 'brown'},
+          {'text': 'H16', 'color': 'brown'}],
+         [{'text': 'H7', 'color': 'brown'},
+          {'text': 'AA13', 'color': 'brown'},
+          {'text': 'I17', 'color': 'brown'},
+          {'text': 'W4', 'color': 'brown'},
+          {'text': 'V23', 'color': 'yellow'},
+          {'text': 'M23', 'color': 'yellow'},
+          {'text': 'S16', 'color': 'yellow'},
+          {'text': 'J5', 'color': 'yellow'},
+          {'text': 'U13', 'color': 'yellow'},
+          {'text': 'T24', 'color': 'yellow'},
+          {'text': 'S9', 'color': 'yellow'},
+          {'text': 'V13', 'color': 'yellow'},
+          {'text': 'U10', 'color': 'yellow'},
+          {'text': 'R22', 'color': 'yellow'}],
+         [{'text': 'H15', 'color': 'brown'},
+          {'text': 'H11', 'color': 'brown'},
+          {'text': 'F18', 'color': 'yellow'},
+          {'text': 'K7', 'color': 'yellow'},
+          {'text': 'J22', 'color': 'yellow'},
+          {'text': 'O22', 'color': 'yellow'},
+          {'text': 'U7', 'color': 'yellow'},
+          {'text': 'L16', 'color': 'yellow'},
+          {'text': 'N12', 'color': 'yellow'},
+          {'text': 'I23', 'color': 'yellow'},
+          {'text': 'K20', 'color': 'yellow'},
+          {'text': 'T28', 'color': 'yellow'},
+          {'text': 'O24', 'color': 'yellow'},
+          {'text': 'V11', 'color': 'yellow'}],
+         [{'text': 'N2', 'color': 'brown'},
+          {'text': 'O6', 'color': 'brown'},
+          {'text': 'G12', 'color': 'brown'},
+          {'text': 'F21', 'color': 'yellow'},
+          {'text': 'U14', 'color': 'yellow'},
+          {'text': 'O30', 'color': 'yellow'},
+          {'text': 'W12', 'color': 'yellow'},
+          {'text': 'O12', 'color': 'yellow'},
+          {'text': 'K21', 'color': 'yellow'},
+          {'text': 'Q15', 'color': 'yellow'},
+          {'text': 'N11', 'color': 'yellow'},
+          {'text': 'N28', 'color': 'yellow'},
+          {'text': 'P9', 'color': 'yellow'},
+          {'text': 'X3', 'color': 'yellow'}],
+         [{'text': 'L20', 'color': 'yellow'},
+          {'text': 'M13', 'color': 'yellow'},
+          {'text': 'H2', 'color': 'yellow'},
+          {'text': 'Q17', 'color': 'yellow'},
+          {'text': 'J14', 'color': 'yellow'},
+          {'text': 'U26', 'color': 'yellow'},
+          {'text': 'T10', 'color': 'yellow'},
+          {'text': 'AA16', 'color': 'yellow'},
+          {'text': 'U2', 'color': 'yellow'},
+          {'text': 'J17', 'color': 'brown'},
+          {'text': 'Q1', 'color': 'brown'},
+          {'text': 'Q20', 'color': 'brown'},
+          {'text': 'W14', 'color': 'brown'},
+          {'text': 'W17', 'color': 'brown'}],
+         [{'text': 'U23', 'color': 'yellow'},
+          {'text': 'Q30', 'color': 'yellow'},
+          {'text': 'X2', 'color': 'yellow'},
+          {'text': 'J8', 'color': 'yellow'},
+          {'text': 'I24', 'color': 'yellow'},
+          {'text': 'N14', 'color': 'yellow'},
+          {'text': 'U22', 'color': 'yellow'},
+          {'text': 'K15', 'color': 'yellow'},
+          {'text': 'AA15', 'color': 'yellow'},
+          {'text': 'E15', 'color': 'yellow'},
+          {'text': 'T21', 'color': 'yellow'},
+          {'text': 'Y10', 'color': 'brown'},
+          {'text': 'L10', 'color': 'brown'},
+          {'text': 'Z9', 'color': 'brown'}],
+         [{'text': 'R5', 'color': 'brown'},
+          {'text': 'W9', 'color': 'brown'},
+          {'text': 'R13', 'color': 'brown'},
+          {'text': 'Y11', 'color': 'brown'},
+          {'text': 'M4', 'color': 'brown'},
+          {'text': 'Q14', 'color': 'brown'},
+          {'text': 'R19', 'color': 'brown'},
+          {'text': 'V8', 'color': 'yellow'},
+          {'text': 'N22', 'color': 'yellow'},
+          {'text': 'Q25', 'color': 'yellow'},
+          {'text': 'N15', 'color': 'yellow'},
+          {'text': 'Y12', 'color': 'yellow'},
+          {'text': 'R11', 'color': 'yellow'},
+          {'text': 'P30', 'color': 'yellow'}],
+         [{'text': 'F15', 'color': 'yellow'},
+          {'text': 'T6', 'color': 'yellow'},
+          {'text': 'Q28', 'color': 'yellow'},
+          {'text': 'F23', 'color': 'yellow'},
+          {'text': 'M7', 'color': 'yellow'},
+          {'text': 'S7', 'color': 'yellow'},
+          {'text': 'L6', 'color': 'yellow'},
+          {'text': 'L26', 'color': 'yellow'},
+          {'text': 'K9', 'color': 'yellow'},
+          {'text': 'I22', 'color': 'yellow'},
+          {'text': 'V19', 'color': 'brown'},
+          {'text': 'AA6', 'color': 'brown'},
+          {'text': 'W8', 'color': 'brown'},
+          {'text': 'S19', 'color': 'brown'}],
+         [{'text': 'P8', 'color': 'yellow'},
+          {'text': 'Q26', 'color': 'yellow'},
+          {'text': 'N9', 'color': 'yellow'},
+          {'text': 'R17', 'color': 'yellow'},
+          {'text': 'W21', 'color': 'yellow'},
+          {'text': 'AA8', 'color': 'yellow'},
+          {'text': 'O11', 'color': 'yellow'},
+          {'text': 'N3', 'color': 'brown'},
+          {'text': 'S10', 'color': 'brown'},
+          {'text': 'X7', 'color': 'brown'},
+          {'text': 'P20', 'color': 'brown'},
+          {'text': 'X17', 'color': 'brown'},
+          {'text': 'O18', 'color': 'brown'},
+          {'text': 'Q13', 'color': 'black'}],
+         [{'text': 'T4', 'color': 'brown'},
+          {'text': 'Z8', 'color': 'brown'},
+          {'text': 'T11', 'color': 'brown'},
+          {'text': 'P7', 'color': 'brown'},
+          {'text': 'X9', 'color': 'brown'},
+          {'text': 'Q4', 'color': 'brown'},
+          {'text': 'R3', 'color': 'brown'},
+          {'text': 'W23', 'color': 'yellow'},
+          {'text': 'M28', 'color': 'yellow'},
+          {'text': 'R16', 'color': 'yellow'},
+          {'text': 'Z11', 'color': 'yellow'},
+          {'text': 'O14', 'color': 'yellow'},
+          {'text': 'G21', 'color': 'yellow'},
+          {'text': 'S17', 'color': 'yellow'}],
+         [{'text': 'G14', 'color': 'brown'},
+          {'text': 'L18', 'color': 'brown'},
+          {'text': 'N19', 'color': 'brown'},
+          {'text': 'M2', 'color': 'brown'},
+          {'text': 'V18', 'color': 'brown'},
+          {'text': 'R26', 'color': 'yellow'},
+          {'text': 'Z12', 'color': 'yellow'},
+          {'text': 'U20', 'color': 'yellow'},
+          {'text': 'J23', 'color': 'yellow'},
+          {'text': 'S21', 'color': 'yellow'},
+          {'text': 'E11', 'color': 'yellow'},
+          {'text': 'K29', 'color': 'yellow'},
+          {'text': 'N17', 'color': 'yellow'},
+          {'text': 'P14', 'color': 'black'}],
+         [{'text': 'R30', 'color': 'yellow'},
+          {'text': 'S14', 'color': 'yellow'},
+          {'text': 'Y15', 'color': 'yellow'},
+          {'text': 'O28', 'color': 'yellow'},
+          {'text': 'M14', 'color': 'yellow'},
+          {'text': 'K26', 'color': 'yellow'},
+          {'text': 'AA11', 'color': 'yellow'},
+          {'text': 'J13', 'color': 'yellow'},
+          {'text': 'L19', 'color': 'brown'},
+          {'text': 'H9', 'color': 'brown'},
+          {'text': 'I20', 'color': 'brown'},
+          {'text': 'F8', 'color': 'brown'},
+          {'text': 'V17', 'color': 'brown'},
+          {'text': 'U3', 'color': 'brown'}],
+         [{'text': 'P11', 'color': 'yellow'},
+          {'text': 'S30', 'color': 'yellow'},
+          {'text': 'F7', 'color': 'yellow'},
+          {'text': 'M30', 'color': 'yellow'},
+          {'text': 'M1', 'color': 'yellow'},
+          {'text': 'O15', 'color': 'yellow'},
+          {'text': 'T5', 'color': 'yellow'},
+          {'text': 'T15', 'color': 'yellow'},
+          {'text': 'N20', 'color': 'brown'},
+          {'text': 'J19', 'color': 'brown'},
+          {'text': 'M5', 'color': 'brown'},
+          {'text': 'T2', 'color': 'brown'},
+          {'text': 'D19', 'color': 'brown'},
+          {'text': 'W15', 'color': 'brown'}],
+         [{'text': 'V5', 'color': 'yellow'},
+          {'text': 'L13', 'color': 'yellow'},
+          {'text': 'L9', 'color': 'yellow'},
+          {'text': 'N23', 'color': 'yellow'},
+          {'text': 'Q8', 'color': 'yellow'},
+          {'text': 'H3', 'color': 'yellow'},
+          {'text': 'I12', 'color': 'yellow'},
+          {'text': 'I8', 'color': 'brown'},
+          {'text': 'H14', 'color': 'brown'},
+          {'text': 'K3', 'color': 'brown'},
+          {'text': 'L2', 'color': 'brown'},
+          {'text': 'V16', 'color': 'brown'},
+          {'text': 'D18', 'color': 'brown'},
+          {'text': 'Y13', 'color': 'brown'}],
+         [{'text': 'U11', 'color': 'yellow'},
+          {'text': 'G15', 'color': 'yellow'},
+          {'text': 'E23', 'color': 'yellow'},
+          {'text': 'M24', 'color': 'yellow'},
+          {'text': 'R25', 'color': 'yellow'},
+          {'text': 'T29', 'color': 'yellow'},
+          {'text': 'V3', 'color': 'yellow'},
+          {'text': 'I27', 'color': 'yellow'},
+          {'text': 'U12', 'color': 'yellow'},
+          {'text': 'S29', 'color': 'yellow'},
+          {'text': 'U18', 'color': 'brown'},
+          {'text': 'O4', 'color': 'brown'},
+          {'text': 'E19', 'color': 'brown'},
+          {'text': 'R2', 'color': 'brown'}],
+         [{'text': 'K25', 'color': 'yellow'},
+          {'text': 'Y17', 'color': 'yellow'},
+          {'text': 'T8', 'color': 'yellow'},
+          {'text': 'V9', 'color': 'yellow'},
+          {'text': 'N27', 'color': 'yellow'},
+          {'text': 'V10', 'color': 'yellow'},
+          {'text': 'S23', 'color': 'yellow'},
+          {'text': 'S28', 'color': 'yellow'},
+          {'text': 'Z18', 'color': 'yellow'},
+          {'text': 'K2', 'color': 'yellow'},
+          {'text': 'S18', 'color': 'brown'},
+          {'text': 'P15', 'color': 'brown'},
+          {'text': 'N5', 'color': 'brown'},
+          {'text': 'Y8', 'color': 'brown'}],
+         [{'text': 'O27', 'color': 'yellow'},
+          {'text': 'T26', 'color': 'yellow'},
+          {'text': 'N29', 'color': 'yellow'},
+          {'text': 'L21', 'color': 'yellow'},
+          {'text': 'L28', 'color': 'yellow'},
+          {'text': 'W3', 'color': 'yellow'},
+          {'text': 'Q27', 'color': 'yellow'},
+          {'text': 'Q2', 'color': 'brown'},
+          {'text': 'R4', 'color': 'brown'},
+          {'text': 'M17', 'color': 'brown'},
+          {'text': 'H13', 'color': 'brown'},
+          {'text': 'G7', 'color': 'brown'},
+          {'text': 'M3', 'color': 'brown'},
+          {'text': 'G9', 'color': 'brown'}],
+         [{'text': 'T20', 'color': 'yellow'},
+          {'text': 'M12', 'color': 'yellow'},
+          {'text': 'P23', 'color': 'yellow'},
+          {'text': 'T23', 'color': 'yellow'},
+          {'text': 'K13', 'color': 'yellow'},
+          {'text': 'I10', 'color': 'yellow'},
+          {'text': 'P16', 'color': 'yellow'},
+          {'text': 'N8', 'color': 'yellow'},
+          {'text': 'F19', 'color': 'yellow'},
+          {'text': 'M22', 'color': 'yellow'},
+          {'text': 'F12', 'color': 'yellow'},
+          {'text': 'G6', 'color': 'yellow'},
+          {'text': 'W7', 'color': 'brown'},
+          {'text': 'W18', 'color': 'brown'}],
+         [{'text': 'S13', 'color': 'yellow'},
+          {'text': 'Q29', 'color': 'yellow'},
+          {'text': 'I6', 'color': 'yellow'},
+          {'text': 'L5', 'color': 'yellow'},
+          {'text': 'L25', 'color': 'yellow'},
+          {'text': 'M6', 'color': 'yellow'},
+          {'text': 'H26', 'color': 'yellow'},
+          {'text': 'L29', 'color': 'yellow'},
+          {'text': 'Q9', 'color': 'yellow'},
+          {'text': 'V14', 'color': 'yellow'},
+          {'text': 'Q16', 'color': 'yellow'},
+          {'text': 'L4', 'color': 'yellow'},
+          {'text': 'Q6', 'color': 'brown'},
+          {'text': 'M19', 'color': 'brown'}],
+         [{'text': 'W5', 'color': 'brown'},
+          {'text': 'J18', 'color': 'brown'},
+          {'text': 'S11', 'color': 'brown'},
+          {'text': 'X10', 'color': 'brown'},
+          {'text': 'F9', 'color': 'brown'},
+          {'text': 'N30', 'color': 'yellow'},
+          {'text': 'G22', 'color': 'yellow'},
+          {'text': 'W25', 'color': 'yellow'},
+          {'text': 'M16', 'color': 'yellow'},
+          {'text': 'T1', 'color': 'yellow'},
+          {'text': 'F22', 'color': 'yellow'},
+          {'text': 'R29', 'color': 'yellow'},
+          {'text': 'L24', 'color': 'yellow'},
+          {'text': 'R15', 'color': 'yellow'}],
+         [{'text': 'O10', 'color': 'yellow'},
+          {'text': 'P2', 'color': 'yellow'},
+          {'text': 'E13', 'color': 'yellow'},
+          {'text': 'W10', 'color': 'yellow'},
+          {'text': 'U25', 'color': 'yellow'},
+          {'text': 'W11', 'color': 'yellow'},
+          {'text': 'I21', 'color': 'yellow'},
+          {'text': 'I18', 'color': 'brown'},
+          {'text': 'O5', 'color': 'brown'},
+          {'text': 'H10', 'color': 'brown'},
+          {'text': 'L3', 'color': 'brown'},
+          {'text': 'P3', 'color': 'brown'},
+          {'text': 'G11', 'color': 'brown'},
+          {'text': 'N4', 'color': 'brown'}],
+         [{'text': 'J15', 'color': 'yellow'},
+          {'text': 'I29', 'color': 'yellow'},
+          {'text': 'K28', 'color': 'yellow'},
+          {'text': 'U21', 'color': 'yellow'},
+          {'text': 'R6', 'color': 'yellow'},
+          {'text': 'Q23', 'color': 'yellow'},
+          {'text': 'I28', 'color': 'yellow'},
+          {'text': 'K27', 'color': 'yellow'},
+          {'text': 'N24', 'color': 'yellow'},
+          {'text': 'Y5', 'color': 'yellow'},
+          {'text': 'F11', 'color': 'brown'},
+          {'text': 'Z14', 'color': 'brown'},
+          {'text': 'K18', 'color': 'brown'},
+          {'text': 'R20', 'color': 'brown'}],
+         [{'text': 'Q21', 'color': 'yellow'},
+          {'text': 'P17', 'color': 'yellow'},
+          {'text': 'O21', 'color': 'yellow'},
+          {'text': 'U4', 'color': 'yellow'},
+          {'text': 'O8', 'color': 'yellow'},
+          {'text': 'T13', 'color': 'yellow'},
+          {'text': 'M10', 'color': 'yellow'},
+          {'text': 'P25', 'color': 'yellow'},
+          {'text': 'K24', 'color': 'yellow'},
+          {'text': 'S22', 'color': 'yellow'},
+          {'text': 'H4', 'color': 'yellow'},
+          {'text': 'Q5', 'color': 'brown'},
+          {'text': 'W16', 'color': 'brown'},
+          {'text': 'G13', 'color': 'brown'}],
+         [{'text': 'O29', 'color': 'yellow'},
+          {'text': 'Z10', 'color': 'yellow'},
+          {'text': 'R10', 'color': 'yellow'},
+          {'text': 'E16', 'color': 'yellow'},
+          {'text': 'F20', 'color': 'yellow'},
+          {'text': 'X18', 'color': 'yellow'},
+          {'text': 'I3', 'color': 'yellow'},
+          {'text': 'U24', 'color': 'yellow'},
+          {'text': 'V12', 'color': 'yellow'},
+          {'text': 'U8', 'color': 'yellow'},
+          {'text': 'AA9', 'color': 'yellow'},
+          {'text': 'M27', 'color': 'yellow'},
+          {'text': 'S4', 'color': 'brown'},
+          {'text': 'O19', 'color': 'brown'}],
+         [{'text': 'Q19', 'color': 'brown'},
+          {'text': 'I13', 'color': 'brown'},
+          {'text': 'O1', 'color': 'brown'},
+          {'text': 'S2', 'color': 'brown'},
+          {'text': 'Y14', 'color': 'brown'},
+          {'text': 'E6', 'color': 'brown'},
+          {'text': 'X15', 'color': 'brown'},
+          {'text': 'E24', 'color': 'yellow'},
+          {'text': 'O26', 'color': 'yellow'},
+          {'text': 'U28', 'color': 'yellow'},
+          {'text': 'Y6', 'color': 'yellow'},
+          {'text': 'R28', 'color': 'yellow'},
+          {'text': 'N10', 'color': 'yellow'},
+          {'text': 'W22', 'color': 'yellow'}]];
 
         let selectedPoint = null;
         let currentImages = [];
@@ -624,7 +1294,7 @@
             const refreshInfo = document.getElementById('refreshInfo');
             const refreshBtn = document.getElementById('refreshBtn');
             if (refreshInfo) {
-                refreshInfo.textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
+                refreshInfo.textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x Wechseln möglich' : 'Keine Wechsel mehr möglich';
             }
             if (refreshBtn) {
                 refreshBtn.disabled = refreshCount === 0;
@@ -770,7 +1440,7 @@
             const refreshInfo = document.getElementById('refreshInfo');
             const refreshBtn = document.getElementById('refreshBtn');
             if (refreshInfo) {
-                refreshInfo.textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
+                refreshInfo.textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x Wechseln möglich' : 'Keine Wechsel mehr möglich';
             }
             if (refreshBtn) {
                 refreshBtn.disabled = refreshCount === 0;
