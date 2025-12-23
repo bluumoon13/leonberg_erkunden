@@ -167,6 +167,23 @@
             margin-top: 10px;
         }
 
+        .congrats-message {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .congrats-message p {
+            margin: 10px 0;
+            color: white;
+        }
+
         .controls {
             background: white;
             border-radius: 15px;
@@ -485,9 +502,6 @@
             </div>
             <div class="refresh-info" id="refreshInfo">Noch 3x wechseln moeglich</div>
         </div>
-
-        <div id="resultBox"></div>
-        <div id="errorBox"></div>
     </div>
 
     <script>
@@ -529,7 +543,7 @@
                 localStorage.setItem('currentImages', JSON.stringify(currentImages));
             }
             
-            if (savedRefreshCount !== null) {
+            if (savedRefreshCount !== null && savedRefreshCount !== undefined) {
                 refreshCount = parseInt(savedRefreshCount);
             } else {
                 localStorage.setItem('refreshCount', refreshCount.toString());
@@ -571,6 +585,7 @@
 
         function displayImages() {
             const grid = document.getElementById('imagesGrid');
+            if (!grid) return;
             grid.innerHTML = '';
             currentImages.forEach(pointNum => {
                 const card = document.createElement('div');
@@ -609,10 +624,14 @@
             displayImages();
             selectedPoint = null;
             closeImagePopup();
-            document.getElementById('refreshInfo').textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
-            document.getElementById('refreshBtn').disabled = refreshCount === 0;
-            document.getElementById('resultBox').innerHTML = '';
-            document.getElementById('errorBox').innerHTML = '';
+            const refreshInfo = document.getElementById('refreshInfo');
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshInfo) {
+                refreshInfo.textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
+            }
+            if (refreshBtn) {
+                refreshBtn.disabled = refreshCount === 0;
+            }
         }
 
         function saveSuccess(pointNumber) {
@@ -627,19 +646,28 @@
 
         function showGallery() {
             const grid = document.getElementById('galleryGrid');
+            const congratsDiv = document.getElementById('congratsMessage');
             grid.innerHTML = '';
+            congratsDiv.innerHTML = '';
+            
             const completed = Object.keys(completedPoints).filter(k => completedPoints[k]);
+            
             if (completed.length === 0) {
                 grid.innerHTML = '<p style="text-align:center; color:#666;">Noch keine Orte gefunden!</p>';
             } else {
+                if (completed.length === 38) {
+                    congratsDiv.innerHTML = '<div class="congrats-message"><p>HERZLICHEN GLUECKWUNSCH!</p><p>Du hast alle 38 Orte in Leonberg gefunden!</p><p>Du kennst Leonberg jetzt wie deine Westentasche!</p></div>';
+                }
+                
                 completed.forEach(pointNum => {
                     const item = document.createElement('div');
                     item.className = 'gallery-item';
-                    item.onclick = () => showCompletedPoint(parseInt(pointNum));
+                    item.onclick = () => showGalleryDetail(parseInt(pointNum));
                     item.innerHTML = '<img src="pictures/' + pointNum + '.JPG" alt="Bild">';
                     grid.appendChild(item);
                 });
             }
+            
             document.getElementById('galleryOverlay').classList.add('active');
         }
 
@@ -647,16 +675,25 @@
             document.getElementById('galleryOverlay').classList.remove('active');
         }
 
-        function showCompletedPoint(pointNum) {
-            closeGallery();
+        function showGalleryDetail(pointNum) {
             const cells = cellData[pointNum - 1];
             const imagePath = 'pictures/' + pointNum + '.JPG';
-            let resultHtml = '<div class="result-box"><img src="' + imagePath + '" alt="Bild" class="result-image"><div class="message-box message-success">Bereits gefunden!</div><div class="cell-grid">';
+            
+            document.getElementById('galleryDetailImage').src = imagePath;
+            
+            let cellsHtml = '<div class="cell-grid">';
             for (const cell of cells) {
-                resultHtml += '<div class="cell cell-' + cell.color + '">' + cell.text + '</div>';
+                cellsHtml += '<div class="cell cell-' + cell.color + '">' + cell.text + '</div>';
             }
-            resultHtml += '</div></div>';
-            document.getElementById('resultBox').innerHTML = resultHtml;
+            cellsHtml += '</div>';
+            
+            document.getElementById('galleryDetailCells').innerHTML = cellsHtml;
+            document.getElementById('galleryDetailPopup').classList.add('active');
+        }
+
+        function closeGalleryDetail(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('galleryDetailPopup').classList.remove('active');
         }
 
         function showHelp() {
@@ -677,15 +714,13 @@
         function checkLocation() {
             if (!selectedPoint) return;
             const popupResultBox = document.getElementById('popupResultBox');
-            const errorBox = document.getElementById('errorBox');
             const checkBtn = document.querySelector('#imagePopupContent button');
             popupResultBox.innerHTML = '';
-            errorBox.innerHTML = '';
             const idx = selectedPoint - 1;
             const target = gpsData[idx];
             const cells = cellData[idx];
             if (!navigator.geolocation) {
-                errorBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstuetzt</div>';
+                popupResultBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstuetzt</div>';
                 return;
             }
             checkBtn.disabled = true;
@@ -735,8 +770,14 @@
         window.onload = function() {
             loadSavedState();
             displayImages();
-            document.getElementById('refreshInfo').textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
-            document.getElementById('refreshBtn').disabled = refreshCount === 0;
+            const refreshInfo = document.getElementById('refreshInfo');
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshInfo) {
+                refreshInfo.textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
+            }
+            if (refreshBtn) {
+                refreshBtn.disabled = refreshCount === 0;
+            }
         };
     </script>
 </body>
