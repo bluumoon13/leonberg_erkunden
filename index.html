@@ -1374,6 +1374,8 @@
         function resetProgress() {
             if (confirm('Moechtest du wirklich alle gefundenen Punkte zuruecksetzen?')) {
                 localStorage.removeItem('completedPoints');
+                refreshCount = 4;
+                refreshImages();
                 location.reload();
             }
         }
