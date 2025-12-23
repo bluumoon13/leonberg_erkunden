@@ -121,12 +121,25 @@
             object-fit: cover;
         }
 
-        .image-card .number {
-            padding: 10px;
+        .selected-image-display {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
-            font-weight: bold;
-            color: #333;
-            font-size: 18px;
+        }
+
+        .selected-image-display img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .selected-image-display button {
+            max-width: 300px;
+            margin: 0 auto;
         }
 
         .controls {
@@ -431,9 +444,10 @@
 
         <div class="images-grid" id="imagesGrid"></div>
 
+        <div id="selectedImageDisplay"></div>
+
         <div class="controls">
             <div class="button-group">
-                <button id="checkBtn" onclick="checkLocation()" disabled>Standort pruefen</button>
                 <button id="refreshBtn" onclick="refreshImages()">Andere Orte anzeigen</button>
             </div>
             <div class="refresh-info" id="refreshInfo">Noch 3x wechseln moeglich</div>
@@ -470,6 +484,31 @@
         let refreshCount = 3;
         let completedPoints = JSON.parse(localStorage.getItem('completedPoints') || '{}');
 
+        // Lade gespeicherte Werte
+        function loadSavedState() {
+            const savedImages = localStorage.getItem('currentImages');
+            const savedRefreshCount = localStorage.getItem('refreshCount');
+            
+            if (savedImages) {
+                currentImages = JSON.parse(savedImages);
+            } else {
+                currentImages = getRandomPoints(5);
+                localStorage.setItem('currentImages', JSON.stringify(currentImages));
+            }
+            
+            if (savedRefreshCount !== null) {
+                refreshCount = parseInt(savedRefreshCount);
+            } else {
+                localStorage.setItem('refreshCount', refreshCount.toString());
+            }
+        }
+
+        // Speichere aktuellen Zustand
+        function saveState() {
+            localStorage.setItem('currentImages', JSON.stringify(currentImages));
+            localStorage.setItem('refreshCount', refreshCount.toString());
+        }
+
         function getRandomMessage(arr) {
             return arr[Math.floor(Math.random() * arr.length)];
         }
@@ -504,7 +543,7 @@
                 const card = document.createElement('div');
                 card.className = 'image-card';
                 card.onclick = () => selectImage(pointNum);
-                card.innerHTML = '<img src="pictures/' + pointNum + '.jpg" alt="Punkt ' + pointNum + '"><div class="number">Punkt ' + pointNum + '</div>';
+                card.innerHTML = '<img src="pictures/' + pointNum + '.JPG" alt="Bild">';
                 grid.appendChild(card);
             });
         }
@@ -515,16 +554,22 @@
                 card.classList.remove('selected');
             });
             event.currentTarget.classList.add('selected');
-            document.getElementById('checkBtn').disabled = false;
+            
+            const display = document.getElementById('selectedImageDisplay');
+            display.innerHTML = '<div class="selected-image-display"><img src="pictures/' + pointNum + '.JPG" alt="Ausgewaehltes Bild"><button onclick="checkLocation()">Standort pruefen</button></div>';
+            
+            document.getElementById('resultBox').innerHTML = '';
+            document.getElementById('errorBox').innerHTML = '';
         }
 
         function refreshImages() {
             if (refreshCount <= 0) return;
             refreshCount--;
             currentImages = getRandomPoints(5);
+            saveState();
             displayImages();
             selectedPoint = null;
-            document.getElementById('checkBtn').disabled = true;
+            document.getElementById('selectedImageDisplay').innerHTML = '';
             document.getElementById('refreshInfo').textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
             document.getElementById('refreshBtn').disabled = refreshCount === 0;
             document.getElementById('resultBox').innerHTML = '';
@@ -537,7 +582,7 @@
         }
 
         function showDistance(dist, pointNumber) {
-            document.getElementById('distanceInfo').innerHTML = '<div class="distance-info">Entfernung: ' + Math.round(dist) + ' Meter von Punkt ' + pointNumber + '</div>';
+            document.getElementById('distanceInfo').innerHTML = '<div class="distance-info">Entfernung: ' + Math.round(dist) + ' Meter</div>';
             document.getElementById('distanceBtn').style.display = 'none';
         }
 
@@ -552,7 +597,7 @@
                     const item = document.createElement('div');
                     item.className = 'gallery-item';
                     item.onclick = () => showCompletedPoint(parseInt(pointNum));
-                    item.innerHTML = '<img src="pictures/' + pointNum + '.jpg" alt="Punkt ' + pointNum + '"><div class="number-badge">' + pointNum + '</div>';
+                    item.innerHTML = '<img src="pictures/' + pointNum + '.JPG" alt="Bild">';
                     grid.appendChild(item);
                 });
             }
@@ -566,8 +611,8 @@
         function showCompletedPoint(pointNum) {
             closeGallery();
             const cells = cellData[pointNum - 1];
-            const imagePath = 'pictures/' + pointNum + '.jpg';
-            let resultHtml = '<div class="result-box"><img src="' + imagePath + '" alt="Punkt ' + pointNum + '" class="result-image"><div class="message-box message-success">Punkt ' + pointNum + ' - Bereits gefunden!</div><div class="cell-grid">';
+            const imagePath = 'pictures/' + pointNum + '.JPG';
+            let resultHtml = '<div class="result-box"><img src="' + imagePath + '" alt="Bild" class="result-image"><div class="message-box message-success">Bereits gefunden!</div><div class="cell-grid">';
             for (const cell of cells) {
                 resultHtml += '<div class="cell cell-' + cell.color + '">' + cell.text + '</div>';
             }
@@ -592,27 +637,27 @@
 
         function checkLocation() {
             if (!selectedPoint) return;
-            const btn = document.getElementById('checkBtn');
             const resultBox = document.getElementById('resultBox');
             const errorBox = document.getElementById('errorBox');
+            const displayBtn = document.getElementById('selectedImageDisplay').querySelector('button');
             resultBox.innerHTML = '';
             errorBox.innerHTML = '';
             const idx = selectedPoint - 1;
             const target = gpsData[idx];
             const cells = cellData[idx];
-            const imagePath = 'pictures/' + selectedPoint + '.jpg';
+            const imagePath = 'pictures/' + selectedPoint + '.JPG';
             if (!navigator.geolocation) {
                 errorBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstuetzt</div>';
                 return;
             }
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span>Pruefe Position...';
+            displayBtn.disabled = true;
+            displayBtn.innerHTML = '<span class="spinner"></span>Pruefe Position...';
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     const dist = calculateDistance(lat, lon, target.lat, target.lon);
-                    let resultHtml = '<div class="result-box"><img src="' + imagePath + '" alt="Punkt ' + selectedPoint + '" class="result-image">';
+                    let resultHtml = '<div class="result-box"><img src="' + imagePath + '" alt="Bild" class="result-image">';
                     if (dist < 20) {
                         saveSuccess(selectedPoint);
                         resultHtml += '<div class="message-box message-success">' + getRandomMessage(successMessages) + '</div><div class="cell-grid">';
@@ -625,23 +670,24 @@
                             const index = currentImages.indexOf(selectedPoint);
                             if (index !== -1) {
                                 currentImages[index] = newPoints[0];
+                                saveState();
                                 displayImages();
                             }
                         }
                         selectedPoint = null;
-                        btn.disabled = true;
+                        document.getElementById('selectedImageDisplay').innerHTML = '';
                     } else {
                         resultHtml += '<div class="message-box message-fail">' + getRandomMessage(failMessages) + '</div><button class="distance-btn" id="distanceBtn" onclick="showDistance(' + dist + ', ' + selectedPoint + ')">Entfernung anzeigen</button><div id="distanceInfo"></div>';
+                        displayBtn.disabled = false;
+                        displayBtn.innerHTML = 'Standort pruefen';
                     }
                     resultHtml += '</div>';
                     resultBox.innerHTML = resultHtml;
-                    btn.disabled = false;
-                    btn.innerHTML = 'Standort pruefen';
                 },
                 function(error) {
                     errorBox.innerHTML = '<div class="error">GPS-Fehler: ' + error.message + '<br><br>Bitte stelle sicher, dass du die Standortberechtigung erteilt hast.</div>';
-                    btn.disabled = false;
-                    btn.innerHTML = 'Standort pruefen';
+                    displayBtn.disabled = false;
+                    displayBtn.innerHTML = 'Standort pruefen';
                 },
                 {
                     enableHighAccuracy: true,
@@ -652,8 +698,10 @@
         }
 
         window.onload = function() {
-            currentImages = getRandomPoints(5);
+            loadSavedState();
             displayImages();
+            document.getElementById('refreshInfo').textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
+            document.getElementById('refreshBtn').disabled = refreshCount === 0;
         };
     </script>
 </body>
