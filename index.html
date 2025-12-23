@@ -121,25 +121,50 @@
             object-fit: cover;
         }
 
-        .selected-image-display {
-            background: white;
-            border-radius: 15px;
+        .image-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: flex-start;
+            justify-content: center;
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-out;
         }
 
-        .selected-image-display img {
+        .image-popup.active {
+            display: flex;
+        }
+
+        .image-popup-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 600px;
             width: 100%;
-            max-width: 400px;
+            margin-top: 20px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .image-popup-content img {
+            width: 100%;
             border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .image-popup-content button {
+            width: 100%;
             margin-bottom: 15px;
         }
 
-        .selected-image-display button {
-            max-width: 300px;
-            margin: 0 auto;
+        .close-popup-btn {
+            background: #dc3545;
+            margin-top: 10px;
         }
 
         .controls {
@@ -434,6 +459,16 @@
         </div>
     </div>
 
+    <!-- Bild Popup -->
+    <div class="image-popup" id="imagePopup" onclick="closeImagePopup(event)">
+        <div class="image-popup-content" id="imagePopupContent" onclick="event.stopPropagation()">
+            <img id="popupImage" src="" alt="Bild">
+            <button onclick="checkLocation()">Standort pruefen</button>
+            <div id="popupResultBox"></div>
+            <button class="close-popup-btn" onclick="closeImagePopup()">Schliessen</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <div class="gallery-icon" onclick="showGallery()" title="Galerie">G</div>
@@ -443,8 +478,6 @@
         </div>
 
         <div class="images-grid" id="imagesGrid"></div>
-
-        <div id="selectedImageDisplay"></div>
 
         <div class="controls">
             <div class="button-group">
@@ -555,11 +588,17 @@
             });
             event.currentTarget.classList.add('selected');
             
-            const display = document.getElementById('selectedImageDisplay');
-            display.innerHTML = '<div class="selected-image-display"><img src="pictures/' + pointNum + '.JPG" alt="Ausgewaehltes Bild"><button onclick="checkLocation()">Standort pruefen</button></div>';
-            
-            document.getElementById('resultBox').innerHTML = '';
-            document.getElementById('errorBox').innerHTML = '';
+            document.getElementById('popupImage').src = 'pictures/' + pointNum + '.JPG';
+            document.getElementById('popupResultBox').innerHTML = '';
+            document.getElementById('imagePopup').classList.add('active');
+        }
+
+        function closeImagePopup(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('imagePopup').classList.remove('active');
+            document.querySelectorAll('.image-card').forEach(card => {
+                card.classList.remove('selected');
+            });
         }
 
         function refreshImages() {
@@ -569,7 +608,7 @@
             saveState();
             displayImages();
             selectedPoint = null;
-            document.getElementById('selectedImageDisplay').innerHTML = '';
+            closeImagePopup();
             document.getElementById('refreshInfo').textContent = refreshCount > 0 ? 'Noch ' + refreshCount + 'x wechseln moeglich' : 'Keine Wechsel mehr moeglich';
             document.getElementById('refreshBtn').disabled = refreshCount === 0;
             document.getElementById('resultBox').innerHTML = '';
@@ -581,7 +620,7 @@
             localStorage.setItem('completedPoints', JSON.stringify(completedPoints));
         }
 
-        function showDistance(dist, pointNumber) {
+        function showDistance(dist) {
             document.getElementById('distanceInfo').innerHTML = '<div class="distance-info">Entfernung: ' + Math.round(dist) + ' Meter</div>';
             document.getElementById('distanceBtn').style.display = 'none';
         }
@@ -637,27 +676,26 @@
 
         function checkLocation() {
             if (!selectedPoint) return;
-            const resultBox = document.getElementById('resultBox');
+            const popupResultBox = document.getElementById('popupResultBox');
             const errorBox = document.getElementById('errorBox');
-            const displayBtn = document.getElementById('selectedImageDisplay').querySelector('button');
-            resultBox.innerHTML = '';
+            const checkBtn = document.querySelector('#imagePopupContent button');
+            popupResultBox.innerHTML = '';
             errorBox.innerHTML = '';
             const idx = selectedPoint - 1;
             const target = gpsData[idx];
             const cells = cellData[idx];
-            const imagePath = 'pictures/' + selectedPoint + '.JPG';
             if (!navigator.geolocation) {
                 errorBox.innerHTML = '<div class="error">GPS wird von deinem Browser nicht unterstuetzt</div>';
                 return;
             }
-            displayBtn.disabled = true;
-            displayBtn.innerHTML = '<span class="spinner"></span>Pruefe Position...';
+            checkBtn.disabled = true;
+            checkBtn.innerHTML = '<span class="spinner"></span>Pruefe Position...';
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     const dist = calculateDistance(lat, lon, target.lat, target.lon);
-                    let resultHtml = '<div class="result-box"><img src="' + imagePath + '" alt="Bild" class="result-image">';
+                    let resultHtml = '';
                     if (dist < 20) {
                         saveSuccess(selectedPoint);
                         resultHtml += '<div class="message-box message-success">' + getRandomMessage(successMessages) + '</div><div class="cell-grid">';
@@ -674,20 +712,17 @@
                                 displayImages();
                             }
                         }
-                        selectedPoint = null;
-                        document.getElementById('selectedImageDisplay').innerHTML = '';
                     } else {
-                        resultHtml += '<div class="message-box message-fail">' + getRandomMessage(failMessages) + '</div><button class="distance-btn" id="distanceBtn" onclick="showDistance(' + dist + ', ' + selectedPoint + ')">Entfernung anzeigen</button><div id="distanceInfo"></div>';
-                        displayBtn.disabled = false;
-                        displayBtn.innerHTML = 'Standort pruefen';
+                        resultHtml += '<div class="message-box message-fail">' + getRandomMessage(failMessages) + '</div><button class="distance-btn" id="distanceBtn" onclick="showDistance(' + dist + ')">Entfernung anzeigen</button><div id="distanceInfo"></div>';
                     }
-                    resultHtml += '</div>';
-                    resultBox.innerHTML = resultHtml;
+                    popupResultBox.innerHTML = resultHtml;
+                    checkBtn.disabled = false;
+                    checkBtn.innerHTML = 'Standort pruefen';
                 },
                 function(error) {
-                    errorBox.innerHTML = '<div class="error">GPS-Fehler: ' + error.message + '<br><br>Bitte stelle sicher, dass du die Standortberechtigung erteilt hast.</div>';
-                    displayBtn.disabled = false;
-                    displayBtn.innerHTML = 'Standort pruefen';
+                    popupResultBox.innerHTML = '<div class="error">GPS-Fehler: ' + error.message + '<br><br>Bitte stelle sicher, dass du die Standortberechtigung erteilt hast.</div>';
+                    checkBtn.disabled = false;
+                    checkBtn.innerHTML = 'Standort pruefen';
                 },
                 {
                     enableHighAccuracy: true,
